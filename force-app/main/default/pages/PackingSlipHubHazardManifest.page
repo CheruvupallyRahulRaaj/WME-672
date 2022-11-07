@@ -1,0 +1,361 @@
+<apex:page renderAs="pdf" controller="zkmulti.PackingSlipController" showHeader="false" sideBar="false"
+  standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" action="{! doInit }" docType="html-5.0">
+  <html>
+
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Packing Slip</title>
+    <style media="all" type="text/css">
+      @page {
+        margin: 30px 20px 50px 20px;
+
+        @top-center {
+          /*content: element(header);*/
+        }
+
+        @bottom-center {
+          content: element(footer);
+        }
+
+        @bottom-right {
+          content: counter(page) " / "counter(pages);
+        }
+      }
+
+      body {
+        font-family: sans-serif;
+      }
+
+      div.header {
+        position: running(header);
+        margin: 10px 0px 60px 8px;
+        border-bottom: 1px solid black;
+        width: 100%;
+      }
+
+      div.footer {
+        position: running(footer);
+        display: block;
+        padding: 0 0 0 8px;
+        text-align: center;
+        width: 100%;
+      }
+
+      .footer-text {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-size: 12px;
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: inline-block;
+        width: 200px;
+      }
+
+      .pagenumber:before {
+        content: counter(page);
+        float: right;
+        right: 20px;
+        bottom: 5px;
+      }
+
+      .pagecount:before {
+        content: counter(pages);
+      }
+
+      .header-text {
+        display: inline-block;
+        margin: 7px 0 14px 32px;
+      }
+
+      .header-text-slip {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 7px;
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .header img.ee-logo {
+        vertical-align: top;
+      }
+
+      .header-text .header-image-title {
+        height: 20px;
+        vertical-align: top;
+      }
+
+      .ship-info-table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      .ship-info-table td {
+        padding: 5px;
+      }
+
+      .page-table {
+        width: 100%;
+        margin: 30px 0 0 0;
+        border-collapse: collapse;
+      }
+
+      .page-table tr.alternate-row-background {
+        background: #efefef;
+      }
+
+      .table-header {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: black;
+        border-bottom: 1px solid black;
+      }
+
+      .logo {
+        width: 100%;
+        text-align: left;
+        font-weight: bold;
+        font-size: 30px;
+        margin-left: 50px;
+      }
+
+      .slip {
+        letter-spacing: 10px;
+        font-size: 30px;
+        position: absolute;
+        left: 70%;
+        top: 3%;
+      }
+
+      .page-table tr td {
+        padding: 5px;
+      }
+
+      .table-header-right {
+        text-align: right;
+      }
+
+      .table-product-description {
+        font-size: 15px;
+      }
+
+      .table-product-quantity {
+        text-align: right;
+        font-size: 15px;
+      }
+
+      .ship-info-header {
+        font-weight: bold;
+        font-size: 15px;
+        margin-top: 25px;
+        width: 20px;
+        height: 100px;
+      }
+
+      .ship-info-main {
+        font-size: 14px;
+        max-width: 440px;
+      }
+
+      .heading {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      .center-me {
+        text-align: center;
+      }
+
+      .right-me {
+        text-align: right;
+      }
+
+      .product-header {
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      .product-table {
+        width: 100%;
+      }
+
+      .border-me {
+        border: 1px dashed;
+        border-collapse: collapse;
+        border-top: 1px solid;
+        border-bottom: 1px solid;
+      }
+
+      .wholesale {
+        padding-left: 20px;
+      }
+
+      .ship-padding {
+        padding-left: 100px;
+        padding-top: 10px;
+      }
+
+      .bottom-border {
+        border-bottom: 1px solid black;
+        padding-bottom: 10px;
+      }
+
+      .sig-date {
+          text-align: right;
+      }
+
+      .weight-table {
+          width: 24%;
+      }
+
+      .top-margin {
+          margin-top: -5px;
+          margin-left: 3px;
+      }
+
+      .floater {
+          float: right;
+          margin-top: -30px;
+      }
+
+      .certification {
+        font-size: 14px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="footer">
+      <div class="footer-text">
+         {! box.boxNumberString }
+      </div>
+    </div>
+
+    <table class="heading">
+      <tr>
+        <td>24-Hour Emergency #: 1-800-451-846</td>
+        <td>WEST MARINE</td>
+        <td class="right-me">HB4011R</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>1400 NW 45th Street</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="wholesale">Wholesale Pick: {!box.shipment.ZK_Packing_List_Number__c}</td>
+        <td>Seattle WA</td>
+        <td class="right-me">{! box.shipment.ZK_Ship_Date__c}</td>
+      </tr>
+      <tr>
+        <td class="ship-padding">Ship Via: {!box.shipment.zkmulti__Service_Type_Name__c}</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+
+    <p class="center-me">SHIPPERS CERTIFICATION FOR HAZARDOUS MATERIAL</p>
+
+    <br />
+    <br />
+
+    <table class="heading">
+      <tr>
+        <td>Proper Shipping Name</td>
+        <td>Hazard</td>
+        <td></td>
+        <td>Packing</td>
+        <td></td>
+        <td>Weight/Vol</td>
+        <td>Flash</td>
+        <td></td>
+        <td></td>
+        <td>Receivers Name</td>
+        <td></td>
+      </tr>
+      <tr class="bottom-border">
+        <td class="bottom-border">/Chemical Name</td>
+        <td class="bottom-border">Class</td>
+        <td class="bottom-border">ID#</td>
+        <td class="bottom-border">Group</td>
+        <td class="bottom-border">T#</td>
+        <td class="bottom-border">(Per Unit)</td>
+        <td class="bottom-border">Point</td>
+        <td class="bottom-border">Label</td>
+        <td class="bottom-border">Type</td>
+        <td class="bottom-border">/City</td>
+        <td class="bottom-border">State</td>
+      </tr>
+      <tr class="products">
+        <td>APEX</td>
+        <td>APEX</td>
+        <td>APEX</td>
+        <td>APEX</td>
+        <td>APEX</td>
+        <td>APEX/Vol</td>
+        <td>APEX</td>
+        <td>APEX</td>
+        <td>APEX</td>
+        <td>APEX</td>
+        <td>APEX</td>
+      </tr>
+    </table>
+
+
+
+
+
+
+
+    <!-- Products Table Header -->
+
+    <!-- Products -->
+    <!-- </tr>        
+                                  <apex:variable value="{!1}" var="i"/>
+                                  <apex:repeat value="{! box.items }" var="product">
+                                      <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}">
+                                          <td class="table-product-description">
+                                              {! product.item.Description__c }
+                                          </td>
+                                          <td class="table-product-quantity">
+                                              {! product.item.Quantity__c }
+                                          </td>
+                                      </tr>
+                                      <apex:variable value="{!i+1}" var="i" />
+                                  </apex:repeat>
+                          </tbody> -->
+    
+
+    <!-- <img src="{! AttachmentLabelURL }" style="width: 6in; height: 4in;position: absolute;top: 0;"></img> -->
+
+    <div class="certification">
+        <p>CERTIFICATION: THIS IS TO CERTIFY THAT THE ABOVE NAMED MATERIALS ARE PROPERLY CLASSIFIED, DESCRIBED, PACKAGED, MARKED, AND LABELED AND ARE IN PROPER CONDITION FOR TRANSPORTATION ACCORDING TO THE APPLICABLE REGULATIONS OF THE DEPARTMENT OF TRANSPORTATION</p>
+    </div>
+
+    <div class="sig-date">
+        SHIPPER OR AGENT SIGNATURE __________________________  DATE ____________
+    </div>
+
+    <table class="weight-table">
+        <tr>
+            <td>TOTAL WEIGHT:</td>
+            <td>1.05 LBS</td>
+        </tr>
+    </table>
+
+    <p class="top-margin">================</p>
+    <p class='floater'>Page ________ of _________</p>
+
+
+  </body>
+
+  </html>
+
+</apex:page>

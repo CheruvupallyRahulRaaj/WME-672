@@ -1,0 +1,4 @@
+<aura:component implements="force:hasRecordId,force:hasSObjectName,flexipage:availableForRecordHome" controller = "WM_SyncHazardousShipment" access="public" >
+	<!--<ui:button label="Hazardous Shipment" ></ui:button>-->
+    <lightning:button class="slds-p-horizontal_xx-medium" variant="brand" label="Cancel" title="Cancel" onclick="{!c.hazardousShipment}" />
+</aura:component>

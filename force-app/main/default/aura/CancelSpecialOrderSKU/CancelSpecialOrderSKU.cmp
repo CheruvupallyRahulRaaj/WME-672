@@ -1,0 +1,47 @@
+<aura:component implements="force:hasRecordId,force:hasSObjectName,flexipage:availableForRecordHome,lightning:isUrlAddressable" controller = "WM_PickupItems_CancelItems" access="public" >
+
+    <aura:attribute name="showModal" type="boolean" default="false"/>
+    <aura:attribute name="showCancel" type="boolean" default="true"/>
+    <aura:attribute name="showModalforCancel" type="boolean" default="false"/>
+    <aura:attribute name="Status" type="String"/>
+    <lightning:inputField aura:id="fulfillmentobject" fieldName="Status" class="slds-hide" />
+    <aura:attribute name="setMeOnInit" type="String" default="default value" />
+    
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="force:refreshView" action="{!c.doInit}" /> -->
+    
+    <aura:if isTrue="{!v.showCancel}">
+    <div class="slds-align_absolute-center">
+    <lightning:button variant="brand" label="Cancel Special Order SKU" title="Cancel" onclick="{!c.showModalforCancel}" />
+    </div>
+    </aura:if>
+
+    <aura:if isTrue="{!v.showModalforCancel}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.hideModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                            Are you sure you want to cancel this order?</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <!--Modal/Popup Box Footer Starts here-->
+                         	
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                          label="OK"
+                                          title="OK"/>
+                        <lightning:button variant="brand"
+                                          label="NO"
+                                          title="NO"
+                                          onclick="{!c.hideModel}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+</aura:component>

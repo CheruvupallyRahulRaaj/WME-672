@@ -1,0 +1,5 @@
+<apex:page standardController="OrderDeliveryMethod" extensions="ShowFilesController">
+    <apex:repeat value="{!files}" var="file">
+        <div style="padding-bottom: 5px;"><a target="_blank" href="{!file.url}">{!file.fileName}</a></div>
+    </apex:repeat>
+</apex:page>

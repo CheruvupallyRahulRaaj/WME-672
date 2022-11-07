@@ -1,0 +1,103 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:isUrlAddressable" access="global" controller="WM_CertificateLookup"> 
+    <aura:attribute name="showButton" type="Boolean" default="false"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="CertificateResMap" type="Map" />
+    
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>   
+    
+    <aura:if isTrue="{!v.showButton}">
+        <lightning:button variant="brand-outline" label="Certificate Lookup" title="Brand action" onclick="{! c.openTab }" />
+        
+    </aura:if> 
+    
+    <div class="slds-m-around_xx-large">
+    <aura:if isTrue="{!v.isOpen}">
+        
+        
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"> <b> Certificate Details </b> </h2>
+                </header>
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:layout multipleRows="true">
+                    </lightning:layout>
+                    <aura:if isTrue="{!v.CertificateResMap.CertificateDetails.certRecord.length > 0}">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Cert Type"><b>Cert Type</b></div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Cert Number"><b>Cert Number</b></div>
+                                    </th>
+                                    <th scope="col" style="font-weight:bold;">
+                                        <div class="slds-truncate" title="Cert Balance" style="font-weight:bold;"><b>Cert Balance</b></div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Cert Available Balance"><b>Cert Available Balance</b></div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Cert Issued Date"><b>Cert Issued Date</b></div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Cert Expiration Date"><b>Cert Expiration Date</b></div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.CertificateResMap.CertificateDetails.certRecord}" var="cert">
+                                    <tr>
+                                        <td data-label="CertType">
+                                            <div class="slds-truncate" title=""><i>{!cert.CertType}</i></div>
+                                        </td>
+                                        <td data-label="CertNumber">
+                                            <div class="slds-truncate" title=""><i>{!cert.CertNumber}</i></div>
+                                        </td>
+                                        <td data-label="CertBalance">
+                                            <div class="slds-truncate" title=""><i>{!cert.CertBalance}</i></div>
+                                        </td>
+                                        <td data-label="CertAvailableBalance">
+                                            <div class="slds-truncate" title=""><i>{!cert.CertAvailableBalance}</i></div>
+                                        </td>
+                                        <td data-label="CertIssuedDate">
+                                            <div class="slds-truncate" title=""><i>{!cert.CertIssuedDate}</i></div>
+                                        </td>
+                                        <td data-label="CertExpirationDate">
+                                            <div class="slds-truncate" title=""><i>{!cert.CertExpirationDate}</i></div>
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </aura:if>
+                    
+                </div>
+                
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="brand" 
+                                      label="Close"
+                                      title="Cancel"
+                                      onclick="{! c.closeModel }"/>
+                    
+                </footer>
+            </div>
+        </section>
+        
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        
+        
+    </aura:if>
+    </div>
+</aura:component>

@@ -1,0 +1,498 @@
+<apex:page renderAs="pdf" controller="zkmulti.PackingSlipController" showHeader="false" sideBar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" action="{! doInit }" docType="html-5.0">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Packing Slip</title>
+    <style media="all" type="text/css">
+      @page {
+        margin: 30px 20px 50px 20px;
+        @top-center {
+          /*content: element(header);*/
+        }
+        @bottom-center {
+          content: element(footer);
+        }
+        @bottom-right {
+          content: counter(page) " / " counter(pages);
+        }
+      }
+      body {
+        font-family: sans-serif;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      div.header {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        margin: 10px 0px 60px 8px;
+        width: 100%;
+        font-size: 14px;
+      }
+      div.footer {
+        position: running(footer);
+        display: block;
+        padding: 0 0 0 8px;
+        text-align: center;
+        width: 100%;
+      }
+      .footer-text {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-size: 12px;
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: inline-block;
+        width: 200px;
+      }
+      .pagenumber:before {
+        content: counter(page);
+        float: right;
+        right: 20px;
+        bottom: 5px;
+      }
+      .pagecount:before {
+        content: counter(pages);
+      }
+      .header-text {
+        display: inline-block;
+        margin: 7px 0 14px 32px;
+      }
+      .header-text-slip {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 7px;
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .header img.ee-logo {
+        vertical-align: top;
+      }
+      .header-text .header-image-title {
+        height: 20px;
+        vertical-align: top;
+      }
+      .ship-info-table {
+        border-collapse: collapse;
+        width: 60%;
+      }
+      .ship-info-table td {
+        padding: 5px;
+        width: 300px;
+      }
+      .page-table {
+        width: 100%;
+        margin: 30px 0 0 0;
+        border-collapse: collapse;
+        border: 1px solid;
+      }
+
+      .page-table tr.alternate-row-background {
+        background: #efefef;
+      }
+      .table-header {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: black;
+        border-bottom: 1px solid black;
+      }
+
+      .logo {
+        font-weight: bold;
+        font-size: 40px;
+        position: absolute;
+        top: 0px;
+        left: 25px;
+      }
+
+      .page-table tr td {
+        padding: 5px;
+      }
+      .table-header-right {
+        text-align: right;
+      }
+      .table-product-description {
+        font-size: 15px;
+      }
+      .table-product-quantity {
+        text-align: right;
+        font-size: 15px;
+      }
+      .ship-info-header {
+        font-weight: bold;
+        font-size: 15px;
+        margin-top: 25px;
+      }
+      .ship-info-main {
+        font-size: 14px;
+        max-width: 440px;
+      }
+
+      .text-info{
+        margin-top: 20px;
+      }
+
+      .ship-via {
+        margin-top: 50px;
+      }
+
+      .order-info{
+        position: absolute;
+        left: 400px;
+        top: 0px;
+      }
+
+      .customs-info {
+        border: 2px solid;
+        position: absolute;
+        left: 450px;
+        top: 175px;
+        padding: 10px;
+        font-size: 15px;
+      }
+
+      .smaller {
+        font-size: 11px;
+      }
+
+      .logo-png {
+        position: absolute;
+        left: 5px;
+        top: -7px;
+        font-size: 40px;
+      }
+
+      .spacing {
+        margin-top: 10px;
+        width: 300px;
+        border-collapse: collapse;
+        float: right;
+
+      }
+
+      .border-me {
+        border: 2px solid;
+      }
+
+      .bottom-text {
+        width: 50%;
+        float: left;
+        display: block;
+        font-size: 11px;
+      }
+
+      .center-me {
+        text-align: center;
+      }
+
+      .left-me {
+        text-align: left;
+      }
+
+      .spacer {
+        width: 100%;
+        height: 20px;
+      }
+
+
+      
+    </style>
+  </head>
+  <body>
+    <div class="footer">
+      <div class="footer-text">
+        <!-- {! box.boxNumberString } -->
+      </div>
+    </div>
+
+    <div class="header">
+      <!-- <div class="logo">{! $Organization.Name }</div> -->
+      <div class="logo-png"><apex:image url="{!$Resource.SFPro}" width="30" height="30"/>West MarinePro </div>
+
+      
+
+      <div class="order-info">
+          <table class='top-right'>
+            <tr>
+              <td>Customer#</td>
+              <td>{! box.shipment.ZK_Customer_Number__c}</td>
+              <td>Invoice#</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Order Date:</td>
+              <td>{! box.shipment.ZK_Ship_Date__c}</td>
+              <td>Invoice Date:</td>
+              <td>{! box.shipment.ZK_Ship_Date__c}</td>
+            </tr>
+            <tr>
+              <td>Order#</td>
+              <td>{! box.shipment.ZK_Order_Summary__c}</td>
+              <td>Location#</td>
+              <td>{! box.shipment.ZK_Location_Name__c}</td>
+            </tr>
+            <tr>
+              <td>Customer PO#</td>
+              <td>{! box.shipment.ZK_PO_Number__c}</td>
+              <td></td>
+              <td></td>
+            </tr>
+           
+          </table>
+        </div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <table class="ship-info-table">
+      <tr>
+        <td valign="top">
+          <div class="ship-info-header">Shipper:</div>
+          <div class="ship-info-main">
+            {! box.shipment.zkmulti__Sender_Company__c} <br />
+            {! box.shipment.zkmulti__Sender_Street__c} <br />
+            <br />
+            {! box.shipment.zkmulti__Sender_City__c} {! box.shipment.zkmulti__Sender_State_Province__c}&nbsp;&nbsp;&nbsp;
+            {! box.shipment.zkmulti__Sender_Zip_Postal_Code__c} <br />
+            {! box.shipment.zkmulti__Sender_Country__c} <br />
+
+            <!-- {! box.shipment.Sender_Company__c}<br />
+                        {! box.shipment.Sender_Street__c}<br />
+                        {! box.shipment.Sender_City__c} {! box.shipment.Sender_State_Province__c} <br />
+                        {! box.shipment.Sender_Zip_Postal_Code__c}<br />
+                        {! box.shipment.Sender_Country__c} -->
+          </div>
+        </td>
+        <td class="consignee" valign="top">
+          <div class="ship-info-header">Consignee:</div>
+          <div class="ship-info-main">
+            {! box.shipment.zkmulti__Recipient_Company__c} <br />
+            {! box.shipment.zkmulti__Recipient_Street__c} <br />
+            <br />
+            {! box.shipment.zkmulti__Recipient_City__c} {! box.shipment.zkmulti__Recipient_State_Province__c} &nbsp;&nbsp;&nbsp;
+            {! box.shipment.zkmulti__Recipient_Zip_Postal_Code__c} <br />
+            {! box.shipment.zkmulti__Recipient_Country__c} <br />
+            <!-- {! box.shipment.Recipient_Company__c}<br />
+                        {! box.shipment.Recipient_Street__c}<br />
+                        {! box.shipment.Recipient_City__c} {! box.shipment.Recipient_State_Province__c} <br />
+                        {! box.shipment.Recipient_Zip_Postal_Code__c}<br />
+                        {! box.shipment.Recipient_Country__c} -->
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <table class="ship-info-table">
+      <tr>
+        <td valign="top">
+          <div class="ship-info-header">Sold To:</div>
+          <div class="ship-info-main">
+            {! box.shipment.ZK_BillTo_Company__c} <br />
+            {! box.shipment.ZK_BillTo_Street__c} <br />
+            <br />
+            {! box.shipment.ZK_BillTo_City__c} {! box.shipment.ZK_BillTo_State__c}&nbsp;&nbsp;&nbsp;
+            {! box.shipment.ZK_BillTo_Zip__c} <br />
+            {! box.shipment.ZK_BillTo_Country__c} <br />
+            <!-- {! box.shipment.Sender_Company__c}<br />
+                        {! box.shipment.Sender_Street__c}<br />
+                        {! box.shipment.Sender_City__c} {! box.shipment.Sender_State_Province__c} <br />
+                        {! box.shipment.Sender_Zip_Postal_Code__c}<br />
+                        {! box.shipment.Sender_Country__c} -->
+          </div>
+        </td>
+        <td valign="top">
+          <div class="ship-info-header delivered-to">Delivered To:</div>
+          <div class="ship-info-main delivered-to">
+            {! box.shipment.zkmulti__Recipient_Company__c} <br />
+            {! box.shipment.zkmulti__Recipient_Street__c} <br />
+            <br />
+            {! box.shipment.zkmulti__Recipient_City__c} {! box.shipment.zkmulti__Recipient_State_Province__c}&nbsp;&nbsp;&nbsp;
+            {! box.shipment.zkmulti__Recipient_Zip_Postal_Code__c} <br />
+            {! box.shipment.zkmulti__Recipient_Country__c} <br />
+            <!-- {! box.shipment.Recipient_Company__c}<br />
+                        {! box.shipment.Recipient_Street__c}<br />
+                        {! box.shipment.Recipient_City__c} {! box.shipment.Recipient_State_Province__c} <br />
+                        {! box.shipment.Recipient_Zip_Postal_Code__c}<br />
+                        {! box.shipment.Recipient_Country__c} -->
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="customs-info">
+      <div>
+        <p><strong>Payment Terms:</strong></p>
+      <br />
+      </div>
+      <div>
+        <p><strong>Clear through govornment agency by:</strong></p>
+        <p class="smaller">Consignee - Consignee to arrange Customs Clearance</p>
+      <br />
+      </div>
+      <div>
+        <p><strong>ITN:</strong></p>
+        <p><strong>Carrier: {! box.shipment.zkmulti__Carrier__c}</strong></p>
+        <p><strong>Mode of Transport:</strong>{! box.shipment.zkmulti__Service_Type_Name__c}</p>
+      </div>
+      
+
+    </div>
+
+   
+
+    <!-- Products -->
+    <table class="page-table">
+      <tbody>
+        <tr>
+          <td class="table-header"></td>
+          <td class="table-header"></td>
+          <td class="table-header"></td>
+          <td class="table-header">US</td>
+          <td class="table-header">Qty</td>
+          <td class="table-header">Price</td>
+          <td class="table-header">Extended</td>
+        </tr>
+        <tr>
+          <td class="table-header">Model #</td>
+          <td class="table-header">Description</td>
+          <td class="table-header">Country Of Origin</td>
+          <td class="table-header">HTS</td>
+          <td class="table-header">Shipped</td>
+          <td class="table-header">USD</td>
+          <td class="table-header">USD</td>
+
+          </tr>        
+                    <apex:variable value="{!1}" var="i"/>
+                    <apex:repeat value="{! box.items }" var="product">
+                        <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}">
+
+                          <!-- Model Number -->
+                            <td class="center-me">
+                                {! product.item.ZK_WM_Model__c }
+                            </td>
+
+                            <!-- Description -->
+                            <td class="left-me">
+                                {! product.item.zkmulti__Description__c}
+                            </td>
+                            
+                            <!-- Country -->
+                            <td class="center-me">
+                              {! product.item.zkmulti__Country_of_Manufacture__c}
+                          </td>
+
+                          <!-- US HTS -->
+                          <td class="table-product-quantity">
+                            {! product.item.zkmulti__Harmonized_Code__c}
+                        </td>
+
+                        <!-- Qty Shipped -->
+                        <td class="table-product-quantity">
+                          {! product.item.zkmulti__Quantity__c }
+                      </td>
+
+                      <!-- Price USD -->
+                      <td class="table-product-quantity">
+                        {! product.item.ZK_Unit_Price__c }
+                    </td>
+
+                    <!-- Extended USD -->
+                    <td class="table-product-quantity">
+                      {! product.item.ZK_Extended__c }
+                  </td>
+
+                        </tr>
+                        <apex:variable value="{!i+1}" var="i" />
+                    </apex:repeat>
+            </tbody>
+        
+      
+    </table>
+
+    <br />
+    <br />
+    <br />
+
+    <p class="bottom-text">These commodities, technology or software (collectively "goods") were exported from the United States in accordance with the Export Administration Regulations (EAR).  Diversion contraty to U.S. Law is prohibited.  Furthermore, these goods remain subject to U.S. export control and asset control laws, regulations and orders, applicable to the export or re-export of these goods.  Such regulations include without limitation the EAR, International Traffic in Arms Regulations ("ITAR"), and regulations and orders administered by the Treasury Department's Office of Foreign Assets Control.  By purchasing these goods, you acknowledge that you will abide by such laws.  West Marine goods may not be re-exported if such re-export requires an export license under US export control laws, nor may goods be exported to any country against which the United States holds sanctions or embargoes. 
+      
+      <br />
+      <br />
+    
+    <strong><i>West Marine Pro will only accept returns with valid Return Authorization.</i></strong>
+      <br />
+      <br />
+    <strong>Visit westmarinepro.com/returns for additional information.</strong>
+    
+    </p>
+    <br />
+
+    
+
+
+    <table class='spacing'>
+      <tbody>
+        <tr>
+          <td>Subtotal USD</td>
+          <td align="right" class="border-me">{! box.shipment.ZK_Grand_Total__c}</td>
+        </tr>
+        <tr>
+          <td>Additional Charges</td>
+          <td align="right" class="border-me"></td>
+        </tr>
+        <tr>
+          <td>Shipping/Handling</td>
+          <td align="right" class="border-me">{! box.shipment.ZK_Shipping_Cost__c}</td>
+        </tr>
+        <tr>
+          <td>Tax USD</td>
+          <td align="right" class="border-me">{! box.shipment.ZK_Tax__c}</td>
+        </tr>
+        <tr>
+          <td><strong>Shipment Total USD</strong></td>
+          <td align="right" class="border-me">{! box.shipment.ZK_Total_Price__c}</td>
+        </tr>
+        
+
+      </tbody>
+    </table>
+
+    
+
+
+    <!-- <img src="{! AttachmentLabelURL }" style="width: 6in; height: 4in;position: absolute;top: 0;"></img> -->
+  </body>
+</html>
+ </apex:page> 
+
+<!-- Missing Packing List Number, Customer Number, PO, Location -->
+
+<!-- These commodities, technology or software (collectively "goods") were exported from the United States in accordance with the Export Administration Regulations (EAR).  Diversion contraty to U.S. Law is prohibited.  Furthermore, these goods remain subject to U.S. export control and asset control laws, regulations and orders, applicable to the export or re-export of these goods.  Such regulations include without limitation the EAR, International Traffic in Arms Regulations ("ITAR"), and regulations and orders administered by the Treasury Department's Office of Foreign Assets Control.  By purchasing these goods, you acknowledge that you will abide by such laws.  West Marine goods may not be re-exported if such re-export requires an export license under US export control laws, nor may goods be exported to any country against which the United States holds sanctions or embargoes.  -->
+
+<!-- REWRITE ABOVE^^^ -->
+
+<!-- West Marine Pro will only accept returns with valid Return Authorization. -->
+
+<!-- Visit westmarinepro.com/returns for additional information. -->
+
+<!-- Some logo CSS
+        .logo-png {
+        height: 40px;
+        width: 40px;
+        float: left;
+        position: absolute;
+        left: 110px;
+        top: 35px;
+      }
+-->

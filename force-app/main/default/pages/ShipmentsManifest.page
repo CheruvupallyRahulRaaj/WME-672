@@ -1,0 +1,203 @@
+<apex:page renderAs="pdf" controller="GenerateManifestController" showHeader="false" sideBar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" action="{! doInit }" docType="html-5.0">
+    <html>
+        <head>
+            <meta name="viewport" content="width=device-width" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title>Packing Slip</title>
+            <style media="all" type="text/css">
+                
+                @page {
+                size: A4 landscape;
+                margin: 5px;
+                @top-center {
+                content: element(header);
+                }
+                /* @bottom-center {
+                content: element(footer);
+                } */
+                /* @top-right {
+                content: counter(page) " / " counter(pages);
+                } */
+                }
+                body {
+                font-family: sans-serif;
+                }
+
+                div.header {
+                position: running(header);
+                margin: 10px 0px 60px 8px;
+                display: block;
+                /* border-bottom: 1px solid black; */
+                width: 100%;
+                font-size: 10px;
+                transform: rotate(90deg);
+                }
+                div.footer {
+                position: running(footer);
+                display: block;
+                padding: 0 0 0 8px;
+                text-align: center;
+                width:100%;
+                }
+                .footer-text {
+                padding-top: 5px;
+                padding-bottom: 5px;
+                font-size: 12px;
+                text-align: center;
+                font-weight: bold;
+                text-transform: uppercase;
+                display:inline-block;
+                width:200px;
+                }
+                .pagenumber:before {
+                content: counter(page);
+                right: 20px;
+                bottom: 5px;
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+                .header-text {
+                display: inline-block;
+                margin: 7px 0 14px 32px;
+                }
+                .header-text-slip {
+                display: inline-block;
+                font-size: 16px;
+                font-weight: bold;
+                margin-top: 7px;
+                max-width: 500px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                }
+                .header img.ee-logo {
+                vertical-align: top;
+                }
+                .header-text .header-image-title {
+                height: 20px;
+                vertical-align: top;
+                }
+                .ship-info-table {
+                border-collapse: collapse;
+                width: 100%;
+                }
+                .ship-info-table td {
+                padding:5px;
+                }
+                .page-table {
+                font-size: 8px;
+                width: 100%;
+                /* margin: 30px  0 0 0 ; */
+                border-collapse: collapse;
+                }
+                
+                .page-table tr.alternate-row-background {background: #EFEFEF}
+                .table-header {
+                font-size: 16px;
+                font-weight: bold;
+                color:white;
+                background-color: black;
+                border-bottom: 1px solid black;
+                }
+                
+                /* .logo{ width:100%;text-align:center;font-weight:bold;font-size:50px;} */
+                
+                .page-table tr td {padding:5px;}
+                .table-header-right {text-align:right;}
+                .table-product-description {font-size:15px;}
+                .table-product-quantity {text-align:right;font-size:15px;}
+                /* .ship-info-header {
+                font-weight: bold;
+                font-size: 15px;
+                margin-top:25px;
+                }
+                .ship-info-main {
+                font-size: 14px;
+                max-width: 440px;
+                } */
+            </style>
+        </head>
+        <body>
+            
+            <div class="header">
+                <div style="position: absolute; width: 100px;">HB4021RB</div>
+                <div style="position: absolute; left: 250px; text-align: center;">
+                    <!-- PORT SUPPLY/WEST MARINE <br/> PORT SUPPLY VAN DELIVERY MANIFEST FLHV -->
+                    PORT SUPPLY/WEST MARINE <br/> {!headerText}
+                    
+                </div>
+                <div style="position: absolute; left: 530px;">
+                    COMPANY PRIVATE
+                </div>
+                <div style="position: absolute; right: 1px;">
+                    Page <span class="pagenumber"></span><br/>{!today}
+                </div>
+            </div>
+            
+            <div style="padding-top: 22px; display: block; ">
+                <table class="page-table">
+                    <tbody>
+                        <tr style="">
+                            <td class="" style="width: 10px">
+                                TOTES<br/>/BOXES
+                            </td>
+                            <td class="">
+                                ACCT#
+                            </td>
+                            <td class="">
+                                ACCOUNT NAME
+                            </td>
+                            <td class="">
+                                TELEPHONE
+                            </td>
+                            <td class="">
+                                ROUTE SEQ#
+                            </td>
+                            <td class="">
+                                PICK#
+                            </td>
+                            <td class="">
+                                COD AMT
+                            </td>
+                            <td class="">
+                                SIGNATURE OF RECEIVER
+                            </td>
+                        </tr>
+                        <apex:variable value="{!1}" var="i"/>
+                        <apex:repeat value="{! shipments }" var="shipment">
+                            <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}" >
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px dotted black; border-left: 1px dotted black; width: 10px">
+                                    <!-- TOTES/BOXES -->
+                                </td>
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black;  border-right: 1px dotted black; border-left: 1px dotted black;">
+                                    {!shipment.Fulfillment_Order__r.Account.AccountNumber}
+                                </td>
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black;  border-right: 1px dotted black; border-left: 1px dotted black;">
+                                    {!shipment.Fulfillment_Order__r.Account.Name}
+                                </td>
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black;  border-right: 1px dotted black; border-left: 1px dotted black;">
+                                    {!shipment.zkmulti__Recipient_Phone__c}
+                                </td>
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black;  border-right: 1px dotted black; border-left: 1px dotted black;">
+                                    {!shipment.ZK_Route_Seq__c}
+                                </td>
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black;  border-right: 1px dotted black; border-left: 1px dotted black;">
+                                    <!-- PICK# -->
+                                    {!shipment.Fulfillment_Order__r.OrderSummary.OrderNumber}
+                                </td>
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black;  border-right: 1px dotted black; border-left: 1px dotted black;">
+                                    <!-- COD AMT -->
+                                </td>
+                                <td class="" style="border-bottom: 1px solid black; border-top: 1px solid black;  border-right: 1px dotted black; border-left: 1px dotted black;">
+                                    
+                                </td>
+                            </tr>
+                            <apex:variable value="{!i+1}" var="i" />
+                        </apex:repeat>
+                    </tbody>
+                </table>
+            </div>
+        </body>
+    </html>
+</apex:page>

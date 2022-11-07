@@ -1,0 +1,279 @@
+<apex:page renderAs="pdf" controller="zkmulti.PackingSlipController" showHeader="false" sideBar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" action="{! doInit }" docType="html-5.0">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Packing Slip</title>
+    <style media="all" type="text/css">
+      @page {
+        margin: 30px 20px 50px 20px;
+        @top-center {
+          /*content: element(header);*/
+        }
+        @bottom-center {
+          content: element(footer);
+        }
+        @bottom-right {
+          content: counter(page) " / " counter(pages);
+        }
+      }
+      body {
+        font-family: sans-serif;
+      }
+      div.header {
+        position: running(header);
+        margin: 10px 0px 60px 8px;
+        border-bottom: 1px solid black;
+        width: 100%;
+      }
+      div.footer {
+        position: running(footer);
+        display: block;
+        padding: 0 0 0 8px;
+        text-align: center;
+        width: 100%;
+      }
+      .footer-text {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-size: 12px;
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: inline-block;
+        width: 200px;
+      }
+      .pagenumber:before {
+        content: counter(page);
+        float: right;
+        right: 20px;
+        bottom: 5px;
+      }
+      .pagecount:before {
+        content: counter(pages);
+      }
+      .header-text {
+        display: inline-block;
+        margin: 7px 0 14px 32px;
+      }
+      .header-text-slip {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 7px;
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .header img.ee-logo {
+        vertical-align: top;
+      }
+      .header-text .header-image-title {
+        height: 20px;
+        vertical-align: top;
+      }
+      .ship-info-table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .ship-info-table td {
+        padding: 5px;
+      }
+      .page-table {
+        width: 100%;
+        margin: 30px 0 0 0;
+        border-collapse: collapse;
+      }
+
+      .page-table tr.alternate-row-background {
+        background: #efefef;
+      }
+      .table-header {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: black;
+        border-bottom: 1px solid black;
+      }
+
+      .logo {
+        width: 100%;
+        text-align: left;
+        font-weight: bold;
+        font-size: 30px;
+        margin-left: 50px;
+      }
+
+      .slip {
+        letter-spacing: 10px;
+        font-size: 30px;
+        position: absolute;
+        left: 70%;
+        top: 3%;
+      }
+
+      .page-table tr td {
+        padding: 5px;
+      }
+      .table-header-right {
+        text-align: right;
+      }
+      .table-product-description {
+        font-size: 15px;
+      }
+      .table-product-quantity {
+        text-align: right;
+        font-size: 15px;
+      }
+      .ship-info-header {
+        font-weight: bold;
+        font-size: 15px;
+        margin-top: 25px;
+        width: 20px;
+        height: 100px;
+      }
+      .ship-info-main {
+        font-size: 14px;
+        max-width: 440px;
+      }
+
+      .heading {
+        width: 100%;
+      }
+
+      .center-me {
+        text-align: center;
+      }
+
+      .right-me {
+        text-align: right;
+      }
+
+      .product-header {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+      }
+
+      .product-table {
+        width: 100%;
+      }
+
+      .border-me {
+        border: 1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="footer">
+      <div class="footer-text">
+        <!-- {! box.boxNumberString } -->
+      </div>
+    </div>
+
+    <table class="heading">
+      <tr>
+        <td>HB4021RB</td>
+        <td class="center-me">PORT SUPPLY/WEST MARTINE</td>
+        <td>COMPANY PRIVATE</td>
+        <td class="right-me">PAGE APEX</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="center-me">PORT SUPPLY VAN DELIVERY MANIFEST FLHV</td>
+        <td></td>
+        <td class="right-me">{! box.shipment.ZK_Ship_Date__c}</td>
+      </tr>
+    </table>
+
+    <!-- Products Table Header -->
+    <table class="product-header">
+      <thead>
+        <tr>
+          <td class="center-me">TOTES/</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>ROUTE</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="center-me">BOXES</td>
+          <td class="center-me">ACCT #</td>
+          <td class="center-me">ACCOUNT NAME</td>
+          <td class="center-me">TELEPHONE</td>
+          <td class="center-me">SEQ #</td>
+          <td class="center-me">PICK #</td>
+          <td class="center-me">COD AMT</td>
+          <td class="center-me">SIGNATURE OF RECEIVER</td>
+          <td class="center-me">DATE</td>
+        </tr>
+      </thead>
+
+      <!-- Products -->
+         <tbody>
+                 
+                            <apex:variable value="{!1}" var="i"/>
+                            <apex:repeat value="{! box.items }" var="product">
+                                <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}">
+                                
+                                <!-- Boxes -->
+                                    <td class="border-me center-me">
+                                        {! product.item.zkmulti__Quantity__c }
+                                    </td>
+                                    
+                                <!-- Account Number --> 
+                                    <td class="border-me right-me">
+                                        {! box.shipment.ZK_Account_Number__c}
+                                    </td>
+                                    
+                                <!-- Account Name -->
+                                    <td class="border-me right-me">
+                                        {! box.shipment.ZK_Account_Name__c}
+                                    </td>
+                                    
+                                <!-- Telephone -->
+                                    <td class="border-me right-me">
+                                        {! box.shipment.ZK_Telephone__c}
+                                    </td>
+                                    
+                                <!-- Route Seq Number-->
+                                    <td class="border-me right-me">
+                                        {! box.shipment.ZK_Route_Seq__c}
+                                    </td>
+                                    
+                                <!-- Pick Number-->
+                                    <td class="border-me right-me">
+                                        APEX
+                                    </td>
+                                    
+                                <!-- COD AMOUNT -->
+                                    <td class="border-me right-me">
+                                        APEX
+                                    </td>
+                                    
+                                <!-- Signature Of Receiver -->
+                                    <td class="border-me right-me">
+                                        APEX
+                                    </td>
+                                    
+                                <!-- Date -->
+                                    <td class="border-me right-me">
+                                        {! box.shipment.ZK_Ship_Date__c}
+                                    </td>
+                                    
+                                      </tr>
+                                <apex:variable value="{!i+1}" var="i" />
+                            </apex:repeat>
+     </tbody>
+    </table>
+    
+
+     <!-- <img src="{! AttachmentLabelURL }" style="width: 6in; height: 4in;position: absolute;top: 0;"></img> -->
+  </body>
+</html>
+</apex:page>

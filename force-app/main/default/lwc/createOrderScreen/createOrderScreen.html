@@ -1,0 +1,43 @@
+<template>
+    <lightning-accordion allow-multiple-sections-open
+                         active-section-name={activeSections}>
+        <lightning-accordion-section name="accountSection" label="Account Info">
+            <!-- Account -->
+            <c-person-account selected-id={accountId} onchange={handleAccountChange}></c-person-account>
+        </lightning-accordion-section>
+        <lightning-accordion-section name="productSection" label="Products">
+            <!-- Product -->
+            <c-product onchange={handleProductChange}></c-product>
+        </lightning-accordion-section>
+        <lightning-accordion-section name="optionsSection" label="Other Options">
+            <!-- Order Adjustment -->
+            <lightning-input type="number"
+                name="adjustment"
+                label="Order Adjustment"
+                value={adjustment}
+                formatter="decimal"
+                step="0.01"
+                onchange={handleChangeValue}></lightning-input>
+            <!-- Delivery Method -->
+            <lightning-input name="deliverymethod" type="text" label="Delivery Method" value={deliverymethod} onchange={handleChangeValue}></lightning-input>
+            <!-- Delivery Method -->
+            <lightning-input name="saleschannel" type="text" label="Sales Channel" value={saleschannel} onchange={handleChangeValue}></lightning-input>
+            <!-- Tax Locale Type -->
+            <lightning-combobox
+                    name="taxLocaleType"
+                    label="Tax Locale Type"
+                    value={taxlocaletype}
+                    placeholder="Select A Tax Locale Type"
+                    options={taxLocaleTypeOptions}
+                    onchange={handleChangeValue}></lightning-combobox>
+            <!-- Payment Transaction -->
+            <lightning-combobox
+                    name="paymentTransaction"
+                    label="Payment Transaction"
+                    value={transactiontype}
+                    placeholder="Select A Payment Transaction"
+                    options={transactionTypeOptions}
+                    onchange={handleChangeValue}></lightning-combobox>
+        </lightning-accordion-section>
+    </lightning-accordion>
+</template>

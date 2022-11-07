@@ -1,0 +1,65 @@
+<template>
+    <div class="slds-box slds-m-bottom_small">
+        <template if:true={displayProductCombobox}>
+            <lightning-combobox
+                name="existingProducts"
+                label="Choose for a list of existing products or create a new product below "
+                placeholder="Select an exsiting product"
+                value={selectedProduct}
+                options={existingProducts}
+                field-level-help="Select from a list of existing products"
+                onchange={handleExistingProduct}></lightning-combobox>
+        </template>
+        <template if:true={displayNewProduct}>
+            <div class="slds-box slds-m-top_small slds-theme_shade">
+                <fieldset class="slds-form-element">
+                    <legend class="slds-form-element__label slds-form-element__legend slds-float_none">New Product</legend>
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <lightning-input name="newProductName" type="text" label="Name" value={newProduct.name} onchange={handleNewProductChange}></lightning-input>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-input name="newProductSku" type="text" label="Sku" value={newProduct.sku} onchange={handleNewProductChange}></lightning-input>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-input name="newProductQuantity" type="number" label="Quantity" min="1" step="1" value={newProduct.quantity} onchange={handleNewProductChange}></lightning-input>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-input name="newProductPrice" type="number" label="Price" formatter="decimal" step="0.01" value={newProduct.price} onchange={handleNewProductChange}></lightning-input>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-input name="newProductAdjustment" type="number" label="Adjustment" formatter="decimal" step="0.01" value={newProduct.adjustment} onchange={handleNewProductChange}></lightning-input>
+                        </div>
+                    </div>
+                    <div if:true={displayNewProductMessage} class="slds-grid">
+                        <div class="slds-col slds-text-color_error slds-align_absolute-center slds-m-top_small">
+                            {newProductMessage}
+                        </div>
+                    </div>
+                    <div class="slds-grid">
+                        <div class="slds-col slds-align_absolute-center slds-m-top_small">
+                            <lightning-button variant="brand" label="Add New Product" title="Primary action" onclick={handleNewProduct} class="slds-m-left_x-small"></lightning-button>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </template>
+    </div>
+    <div class="slds-box">
+        <div class="slds-text-title">
+            Selected Products
+        </div>
+        <lightning-datatable
+                key-field="id"
+                data={products}
+                hide-checkbox-column
+                resize-column-disabled
+                columns={columns}
+                onsave={handleSave}
+                oncancel={handleCancel}>
+        </lightning-datatable>
+        <div if:true={displayUpdateProductMessage} class="slds-col slds-text-color_error slds-align_absolute-center slds-m-top_small">
+            {updateProductMessage}
+        </div>
+    </div>
+</template>

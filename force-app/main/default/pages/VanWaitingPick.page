@@ -1,0 +1,43 @@
+<apex:page controller="WM_VanWaitingPick" showHeader="false" renderAs="PDF" applyBodyTag="false" applyHtmlTag="false">
+    <html>
+            <head>
+        <style>
+            @page{
+                size: A4 landscape;
+            }   
+            table, th, td {
+  			border: 1px solid gray;
+  			border-collapse: collapse;
+            border-style: solid;
+			}
+            
+        </style>
+    </head>
+        </html>
+    <apex:form >
+        <div style="margin-right:20px">
+     <apex:pageBlock id="pbId">
+            <apex:pageBlockSection title="All Orders" collapsible="false" columns="1">
+                <table style="width:100%">
+                    <tr><th>Customer</th><th>Fulfillment Order Number</th><th>Order Number</th><th>SKU</th><th>MFG Name</th><th>MFG #</th><th>Description</th><th>Quantity</th><th>Order Delivery Method</th><th>CreatedDate</th><th style="width:10%">QTY Picked</th><th style="width:10%">Picker Notes</th></tr>
+                 <apex:repeat value="{!ShipOrders}" var="ord" >
+                <apex:repeat value="{!ord.FulfillmentOrderLineItems}" var="ordline" > 
+                  <tr>  
+            			<td>{!ord.FulfilledToName}</td>
+            			<td>{!ord.FulfillmentOrderNUmber}</td>
+            			<td>{!ord.OrderSummary.OrderNumber}</td>
+                		<td>{!ordline.Product_SKU__c}</td>
+                      	<td>{!ordline.MFG_Name__c}</td>
+						<td>{!ordline.MFG__c}</td>
+						<td>{!ordline.Description}</td>
+                		<td>{!ordline.Quantity}</td> 
+                		<td>{!ord.DeliveryMethod.Name}</td>
+                      	<td>{!ord.CreatedDate}</td> <td></td>
+                      	<td></td></tr>
+                    </apex:repeat>
+        			</apex:repeat> 
+     			</table> 
+            </apex:pageBlockSection></apex:pageBlock>
+        </div>
+    </apex:form>
+</apex:page>

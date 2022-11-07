@@ -1,0 +1,436 @@
+<apex:page renderAs="pdf"
+  controller="zkmulti.PackingSlipController"
+  showHeader="false"
+  sideBar="false"
+  standardStylesheets="false"
+  applyHtmlTag="false"
+  applyBodyTag="false"
+  action="{! doInit }"
+  docType="html-5.0"
+>
+  <html>
+    <head>
+      <meta name="viewport" content="width=device-width" />
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Packing Slip</title>
+      <style media="all" type="text/css">
+        @page {
+          margin: 30px 20px 50px 20px;
+
+          @top-center {
+            /*content: element(header);*/
+          }
+
+          @bottom-center {
+            content: element(footer);
+          }
+
+          @bottom-right {
+            content: counter(page) " / " counter(pages);
+          }
+        }
+
+        body {
+          font-family: sans-serif;
+        }
+
+        p {
+          margin: 0;
+        }
+
+        div.header {
+          position: absolute;
+          top: 10px;
+          left: 4px;
+          margin: 10px 0px 60px 8px;
+          width: 100%;
+        }
+
+        div.footer {
+          position: running(footer);
+          display: block;
+          padding: 0 0 0 8px;
+          text-align: left;
+          width: 100%;
+        }
+
+        .footer-text {
+          padding-top: 5px;
+          padding-bottom: 5px;
+          font-size: 12px;
+          text-align: center;
+          font-weight: bold;
+          text-transform: uppercase;
+          display: inline-block;
+          width: 200px;
+        }
+
+        .pagenumber:before {
+          content: counter(page);
+          float: right;
+          right: 20px;
+          bottom: 5px;
+        }
+
+        .pagecount:before {
+          content: counter(pages);
+        }
+
+        .header-text {
+          display: inline-block;
+          margin: 7px 0 14px 32px;
+        }
+
+        .header-text-slip {
+          display: inline-block;
+          font-size: 16px;
+          font-weight: bold;
+          margin-top: 7px;
+          max-width: 500px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .header img.ee-logo {
+          vertical-align: top;
+        }
+
+        .header-text .header-image-title {
+          height: 20px;
+          vertical-align: top;
+        }
+
+        .ship-info-table {
+          border-collapse: collapse;
+          width: 60%;
+          border: 2px solid;
+        }
+
+        .ship-info-table td {
+          width: 300px;
+        }
+
+        .page-table {
+          width: 100%;
+          margin: 30px 0 0 0;
+          border-collapse: collapse;
+        }
+
+        .page-table tr.alternate-row-background {
+          background: #efefef;
+        }
+
+        .table-header {
+          font-size: 16px;
+          font-weight: bold;
+          color: white;
+          background-color: #585858;
+          border-bottom: 1px solid black;
+        }
+
+        .logo {
+          text-align: left;
+          font-weight: bold;
+          font-size: 50px;
+          float: left;
+        }
+
+        .page-table tr td {
+          padding: 5px;
+        }
+
+        .table-header-right {
+          text-align: right;
+        }
+
+        .table-product-description {
+          font-size: 15px;
+        }
+
+        .table-product-quantity {
+          text-align: right;
+          font-size: 15px;
+        }
+
+        .ship-info-header {
+          font-weight: bold;
+          font-size: 25px;
+          margin-top: 25px;
+        }
+
+        .ship-info-main {
+          font-size: 14px;
+          max-width: 440px;
+        }
+
+        .order-info {
+          float: right;
+        }
+
+        .text-info {
+          margin-top: 20px;
+        }
+
+        .ship-via {
+          margin-top: 50px;
+        }
+
+        .info {
+          position: absolute;
+          top: 15px;
+          left: 400px;
+        }
+
+        .table-float {
+          float: right;
+          border-collapse: collapse;
+        }
+
+        .border {
+          border: 1px solid;
+          width: 100px;
+          text-align: right;
+        }
+
+        .border-left {
+          border-left: 1px solid;
+        }
+        
+        .border-right {
+            border-right: 1px solid;
+        }
+
+        .return-message {
+          font-weight: bold;
+          font-style: italic;
+          margin-top: 20px;
+          font-size: 20px;
+          width: 60%;
+        }
+
+        .packing-slip {
+          font-weight: bold;
+          font-size: 20px;
+          color: #585858;
+          margin-bottom: -3px;
+        }
+
+        .name {
+          color: #585858;
+          margin-top: -1px;
+        }
+
+        .border-me {
+          border-left: 1px solid;
+          border-right: 1px solid;
+        }
+
+        .border-body {
+          border: 1px solid;
+          border-bottom: 1px solid;
+        }
+
+        .text-right {
+          text-align: right;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="footer">
+        <div class="footer-text">{! box.boxNumberString }</div>
+      </div>
+
+      <div class="header">
+        <div class="logo">
+          <apex:image url="{!$Resource.SFRtl}" width="40" height="40" />
+          <span class="name">West Marine</span>
+        </div>
+        <br />
+
+        <table class="info">
+          <tr>
+            <td>Loyalty#</td>
+            <td>{! box.shipment.ZK_Loyalty__c}</td>
+            <td>Points:</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Order Date:</td>
+            <td>{! box.shipment.ZK_Ship_Date__c}</td>
+            <td>Packing Date:</td>
+            <td>{! box.shipment.ZK_Ship_Date__c}</td>
+          </tr>
+          <tr>
+            <td>Order#</td>
+            <td>{! box.shipment.ZK_Order_Summary__c}</td>
+          </tr>
+        </table>
+      </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <div class="packing-slip">PACKING SLIP</div>
+
+      <table class="ship-info-table">
+        <tr>
+          <td valign="top">
+            <div class="ship-info-header">Sold To:</div>
+            <div class="ship-info-main">
+              {! box.shipment.ZK_BillTo_Company_Retail__c}<br /> {!
+              box.shipment.ZK_BillTo_Street__c}<br />
+              <br />
+              <br />
+              {! box.shipment.ZK_BillTo_City__c} {!
+              box.shipment.ZK_BillTo_State__c} <br /> {!
+              box.shipment.ZK_BillTo_Zip__c}<br />
+              {! box.shipment.ZK_BillTo_Country__c}
+
+              <!-- {! box.shipment.Sender_Company__c}<br />
+              {! box.shipment.Sender_Street__c}<br />
+              {! box.shipment.Sender_City__c} {! box.shipment.Sender_State_Province__c} <br />
+              {! box.shipment.Sender_Zip_Postal_Code__c}<br />
+              {! box.shipment.Sender_Country__c} -->
+            </div>
+          </td>
+          <td class="consignee" valign="top">
+            <div class="ship-info-header">Ship To:</div>
+            <div class="ship-info-main">
+              {! box.shipment.zkmulti__Recipient_Company__c}<br /> {!
+              box.shipment.zkmulti__Recipient_Street__c}<br />
+              <br />
+              <br />
+              {! box.shipment.zkmulti__Recipient_City__c} {!
+              box.shipment.zkmulti__Recipient_State_Province__c} <br /> {!
+              box.shipment.zkmulti__Recipient_Zip_Postal_Code__c}<br />
+              {! box.shipment.zkmulti__Recipient_Country__c}
+              <!-- {! box.shipment.Recipient_Company__c}<br />
+              {! box.shipment.Recipient_Street__c}<br />
+              {! box.shipment.Recipient_City__c} {! box.shipment.Recipient_State_Province__c} <br />
+              {! box.shipment.Recipient_Zip_Postal_Code__c}<br />
+              {! box.shipment.Recipient_Country__c} -->
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <div class="text-info-main">
+        <div class="text-info">
+          <p><strong>{! box.shipment.ZK_First_Name__c}</strong></p>
+          <p>Thank you for shopping with West Marine!</p>
+          <p>
+            For additional information on your order, visit Westmarine.com under
+            My Account
+          </p>
+
+          <div class="ship-via">
+            <p>
+              The following item(s) are included in this shipment and were
+              shipped via: {! box.shipment.zkmulti__Service_Type_Name__c}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products -->
+      <table class="page-table">
+        <tbody>
+          <tr>
+            <td class="table-header"></td>
+            <td class="table-header"></td>
+            <td class="table-header">Qty</td>
+            <td class="table-header">Qty</td>
+            <td class="table-header">Price</td>
+            <td class="table-header border-right">Extended</td>
+          </tr>
+          <tr>
+            <td class="table-header">Model #</td>
+            <td class="table-header">Description</td>
+            <td class="table-header">Ordered</td>
+            <td class="table-header">Shipped</td>
+            <td class="table-header">USD</td>
+            <td class="table-header border-right">USD</td>
+          </tr>
+        </tbody>
+
+        <!-- Products -->
+        <tbody class="border-body">
+          <apex:variable value="{!1}" var="i" />
+          <apex:repeat value="{! box.items }" var="product">
+            <tr class="{!IF(mod(i,2)==0, '', '')}">
+              <!-- Model #-->
+              <td class="center-me">
+                {! product.item.ZK_WM_Model__c}
+              </td>
+
+              <!-- Description -->
+              <td class="right-me">{! product.item.zkmulti__Description__c}</td>
+
+              <!-- Quantity -->
+              <td class="right-me">{! product.item.zkmulti__Quantity__c}</td>
+
+              <!-- Quantity -->
+              <td class="right-me">{! product.item.zkmulti__Quantity__c}</td>
+
+              <!-- Price USD -->
+              <td class="border-me right-me">
+                {! product.item.ZK_Unit_Price__c}
+              </td>
+
+              <!-- Extended USD -->
+              <td class="border-me right-me">
+                {! product.item.ZK_Extended__c}
+              </td>
+            </tr>
+            <apex:variable value="{!i+1}" var="i" />
+          </apex:repeat>
+        </tbody>
+      </table>
+
+      <br />
+      <br />
+
+      <div class="table-float">
+        <table>
+          <tr>
+            <td class="text-right">Shipment Subtotal USD</td>
+            <td class="border">{! box.shipment.ZK_Grand_Total__c}</td>
+          </tr>
+          <tr>
+            <td class="text-right">Additional Charges</td>
+            <td class="border"></td>
+          </tr>
+          <tr>
+            <td class="text-right">Shipping/Handling</td>
+            <td class="border">{! box.shipment.ZK_Shipping_Cost__c}</td>
+          </tr>
+          <tr>
+            <td class="text-right">Tax USD</td>
+            <td class="border">{! box.shipment.ZK_Tax__c}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>Shipment Total USD</strong></td>
+            <td class="border">{! box.shipment.ZK_Total_Price__c}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="wrapper">
+        <div class="return-message">
+          <p>Need to return something? For more information:</p>
+          <p>Visit Westmarine.com/returns</p>
+          <p>Return to local store</p>
+          <p>Call 1-800-BOATING (262-8464)</p>
+        </div>
+      </div>
+
+      <!-- <img src="{! AttachmentLabelURL }" style="width: 6in; height: 4in;position: absolute;top: 0;"></img> -->
+    </body>
+  </html>
+</apex:page>
+
+<!-- Missing Packing List Number, Customer Number, PO, Location -->

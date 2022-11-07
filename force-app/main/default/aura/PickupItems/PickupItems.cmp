@@ -1,0 +1,108 @@
+<aura:component implements="force:hasRecordId,force:hasSObjectName,flexipage:availableForRecordHome,lightning:isUrlAddressable" controller = "WM_PickupItems_CancelItems" access="public" >
+
+    <aura:attribute name="showModal" type="boolean" default="false"/>
+    <aura:attribute name="showPickup" type="boolean" default="false"/>
+    <aura:attribute name="showCancel" type="boolean" default="false"/>
+    <aura:attribute name="showModalforCancel" type="boolean" default="false"/>
+    <aura:attribute name="Status" type="String"/>
+    <lightning:inputField aura:id="fulfillmentobject" fieldName="Status" class="slds-hide" />
+    <aura:attribute name="setMeOnInit" type="String" default="default value" />
+      <!--Added by  MAnohar  start-->
+          <aura:attribute name="errmsg" type="String"/>
+      <!--Added by  MAnohar  end-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:attribute name="haserror" type="boolean" default="false"/>
+    <aura:if isTrue="{!v.showPickup}">
+    <lightning:button variant="brand" label="Pickup Items" title="Pickup Items" onclick="{!c.showModel}" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showCancel}">
+    <lightning:button variant="brand" label="Cancel" title="Cancel" onclick="{!c.showModalforCancel}" />
+    </aura:if>
+
+    
+        <aura:if isTrue="{!v.showModal}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.hideModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                        </h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content" id="modal-content-id-1">
+                        <br/>
+                        <p><b> <span style="margin-left: 45px;;">Customer will be charged. Do you want to proceed?</span></b></p>
+                        <br/>
+                    </div>
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                            label="YES"
+                                            title="YES"
+                                            onclick="{! c.savePickupItemsDetails }"/>
+                        <lightning:button variant="brand"
+                                            label="NO"
+                                            title="NO"
+                                            onclick="{!c.hideModel}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    <aura:if isTrue="{!v.showModalforCancel}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.hideModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                            Select Cancel Reason</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content" id="modal-content-id-1">
+                        <!--Added by  Manohar start -->
+                        <p class="slds-text-color_error ">{!v.errmsg}</p>
+                        <!--Added by  Manohar end-->
+                    <br/>
+                 
+                        <lightning:select name="select1" label="Reason for Cancel?" aura:id="PicklistId" required="true">
+                            <option value="asdfasdfasdfasf">choose one...</option>
+                            <option value="101">Customer Change Mind</option>
+                            <option value="102">Just Sold</option>
+                            <option value="103">Not First Quality</option>
+                            <option value="104">Not Found</option>
+                            <option value="105">Reserved for Another Order</option>
+                        </lightning:select>
+                  
+              
+                    <br/>
+                     
+                    </div>
+       
+                    <!--Modal/Popup Box Footer Starts here-->
+                         	
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                          label="OK"
+                                          title="OK"
+
+                                          onclick="{!c.onControllerFieldChange}"/>
+                        <lightning:button variant="brand"
+                                          label="NO"
+                                          title="NO"
+                                          onclick="{!c.hideModel}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+</aura:component>

@@ -1,0 +1,4 @@
+<aura:component implements="force:lightningQuickAction,force:hasRecordId,force:hasSObjectName" controller="CreateOrderSummaryController">
+    <ltng:require styles="{!$Resource.modalCss}" />
+    <c:createOrderSummary isStandalone="false" sObjectName="{!v.sObjectName}" recordId="{!v.recordId}"></c:createOrderSummary>
+</aura:component>

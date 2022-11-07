@@ -1,0 +1,27 @@
+<template>
+    <lightning-card title="fullstory">
+        <template if:true={fsEnabled}>
+            <template if:false={fsDown}>
+                <template if:false={fetched}>
+                    <p class="slds-p-horizontal_small">
+                        <lightning-button variant="brand" label="Get sessions" onclick={handleClickGetSessions}></lightning-button>
+                    </p>
+                </template>
+                <template if:true={fetched}>
+                    <template if:true={data}>
+                        <lightning-datatable key-field="id" data={data} columns={columns}></lightning-datatable>
+                    </template>
+                    <template if:false={data}>
+                        <p class="slds-p-horizontal_small">No sessions available.</p>
+                    </template>
+                </template>
+            </template>
+            <template if:true={fsDown}>
+                <p class="slds-p-horizontal_small">fullstory sessions is unavailable. Please try again later.</p>
+            </template>
+        </template>
+        <template if:false={fsEnabled}>
+            <p class="slds-p-horizontal_small">fullstory sessions disabled.</p>
+        </template>
+    </lightning-card>
+</template>

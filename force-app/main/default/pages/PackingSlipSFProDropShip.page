@@ -1,0 +1,547 @@
+<apex:page renderAs="pdf" controller="zkmulti.PackingSlipController" showHeader="false" sideBar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" action="{! doInit }" docType="html-5.0">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Packing Slip</title>
+    <style media="all" type="text/css">
+      @page {
+        margin: 30px 20px 50px 20px;
+        @top-center {
+          /*content: element(header);*/
+        }
+        @bottom-center {
+          content: element(footer);
+        }
+        @bottom-right {
+          content: counter(page) " / " counter(pages);
+        }
+      }
+      body {
+        font-family: sans-serif;
+      }
+      div.header {
+        position: running(header);
+        margin: 10px 0px 60px 8px;
+        border-bottom: 1px solid black;
+        width: 100%;
+      }
+      div.footer {
+        position: running(footer);
+        display: block;
+        padding: 0 0 0 8px;
+        text-align: center;
+        width: 100%;
+      }
+      .footer-text {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-size: 12px;
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: inline-block;
+        width: 200px;
+      }
+      .pagenumber:before {
+        content: counter(page);
+        float: right;
+        right: 20px;
+        bottom: 5px;
+      }
+      .pagecount:before {
+        content: counter(pages);
+      }
+      .header-text {
+        display: inline-block;
+        margin: 7px 0 14px 32px;
+      }
+      .header-text-slip {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 7px;
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .header img.ee-logo {
+        vertical-align: top;
+      }
+      .header-text .header-image-title {
+        height: 20px;
+        vertical-align: top;
+      }
+      .ship-info-table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .ship-info-table td {
+        padding: 5px;
+      }
+      .page-table {
+        width: 100%;
+        margin: 30px 0 0 0;
+        border-collapse: collapse;
+      }
+
+      .page-table tr.alternate-row-background {
+        background: #efefef;
+      }
+      .table-header {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: black;
+        border-bottom: 1px solid black;
+      }
+
+      .logo {
+        width: 100%;
+        text-align: left;
+        font-size: 35px;
+        margin-left: 45px;
+        margin-top: 10px;
+        letter-spacing: -2px;
+      }
+
+      .slip {
+        letter-spacing: 11px;
+        font-size: 31px;
+        position: absolute;
+        left: 58%;
+        top: 3%;
+      }
+
+      .page-table tr td {
+        padding: 5px;
+      }
+      .table-header-right {
+        text-align: right;
+      }
+      .table-product-description {
+        font-size: 15px;
+      }
+      .table-product-quantity {
+        text-align: right;
+        font-size: 15px;
+      }
+      .ship-info-header {
+        font-weight: bold;
+        font-size: 15px;
+        margin-top: 25px;
+        width: 20px;
+        height: 100px;
+      }
+      .ship-info-main {
+        font-size: 14px;
+        max-width: 440px;
+      }
+
+      .remit-to {
+        position: absolute;
+        left: 59%;
+        border: 2px solid;
+        top: 10%;
+      }
+
+      .bold-me{
+        font-weight: bold;
+      }
+
+      .spacer {
+        margin-top: 50px;
+        width: 100%;
+        height: 90px;
+      }
+
+      .vertical{
+        width: 12px;
+        height: 130px;
+        float: left;
+        border: 2px solid;
+        padding: 5px;
+        font-weight: bold;
+        letter-spacing: -7px;
+      }
+
+      .sold-to {
+        margin-left: 30px;
+      }
+
+      .spacer2 {
+        width: 100%;
+        height: 50px;
+      }
+
+      .right {
+        position: absolute;
+        left: 60%;
+        top: 23%;
+      }
+
+      .sold-to-shipping {
+        margin-left: 50px;
+      }
+
+      .top-info {
+        width: 100%;
+        border: 2px solid;
+        border-collapse: collapse;
+        font-size: 12px;
+        border-bottom: 2px solid;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+
+      .bold-bottom {
+        border: 2px solid;
+        border-bottom: none;
+      }
+
+      .bold-left-right {
+        border-left: 2px solid;
+        border-right: 2px solid;
+        border-bottom: 2px solid;
+      }
+
+      .products-table{
+        width: 100%;
+        margin-top: 10px;
+        border: 2px solid;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      .logo-png {
+        height: 36px;
+        width: 36px;
+        float: left;
+        position: absolute;
+        left: 10px;
+        top: 15px;
+      }
+
+      .border-me {
+          border: 2px solid;
+      }
+
+      .center-me {
+          text-align: center;
+      }
+
+      .thicker {
+          height: 2px;
+          background-color: black;
+      }
+
+      .bottom {
+          height: 13%;
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 12px;
+      }
+
+      .letter {
+        margin-top: -18px;
+      }
+
+      .letter-first {
+        margin-top: -5px;
+      }
+
+      .letter-i {
+        margin-left: 2px;
+      }
+
+      .sold-to-shipping {
+        margin-top: -7px;
+      }
+
+      .right-me {
+        text-align: right;
+        border-left: 2px solid;
+        border-right: 2px solid;
+      }
+
+     .height-smaller {
+       height: 10%;
+     }
+
+     .center-me-border {
+       text-align: center;
+       border-left: 2px solid;
+       border-right: 2px solid;
+     }
+
+     .smaller {
+      font-size: small;
+      position: absolute;
+      top: 57px; 
+      left: 510px;
+      letter-spacing: 2px;
+  }
+
+      
+
+    </style>
+  </head>
+  <body>
+    <div class="footer">
+      <div class="footer-text">
+        <!-- {! box.boxNumberString } -->
+      </div>
+    </div>
+
+    <!-- <div class="logo">{! $Organization.Name }</div> -->
+    <div class="head">
+      <div class="logo"><strong>West Marine</strong>Pro</div>
+      <div class="logo-png">
+          <apex:image url="{!$Resource.SFPro}"/> 
+      </div>
+      <div class="slip"><strong>PACKING SLIP</strong></div>
+      <div class="smaller">***DROP SHIP***</div>
+      <div class="remit-to">
+        <table class="bold-me">
+          <tr>
+            <td>Remit To:</td>
+            <td>P.O. Box 50060</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Watsonville, CA 95077-5060</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="sold-to-shipping">
+      <div class="vertical">
+        <div class="letter-first">S</div> <br />
+        <div class="letter">O</div><br />
+        <div class="letter letter-i">L</div><br />
+        <div class="letter">D</div><br />
+        <br />
+        <div class="letter">T</div><br />
+        <div class="letter">O</div><br />
+      </div>
+      <div class="sold-to">
+        <table>
+          <tr>
+            <td>{! box.shipment.ZK_BillTo_Company__c}</td>
+          </tr>
+          <tr>
+            <td>{! box.shipment.ZK_BillTo_Street__c}</td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+
+          <tr>
+            <td>{! box.shipment.ZK_BillTo_City__c} {! box.shipment.ZK_BillTo_State__c}</td>
+          </tr>
+          <tr>
+            <td>{! box.shipment.ZK_BillTo_Country__c}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="right">
+        <div class="vertical">
+          <div class="letter-first">S</div> <br />
+          <div class="letter">H</div><br />
+          <div class="letter letter-i">I</div><br />
+          <div class="letter">P</div><br />
+          <br />
+          <div class="letter">T</div><br />
+          <div class="letter">O</div><br />
+        </div>
+        <div class="sold-to">
+          <table>
+            <tr>
+              <td>{! box.shipment.zkmulti__Recipient_Company__c}</td>
+            </tr>
+            <tr>
+              <td>{! box.shipment.zkmulti__Recipient_Street__c}</td>
+            </tr>
+            <tr><td>&nbsp;</td></tr>
+  
+            <tr>
+              <td>{! box.shipment.zkmulti__Recipient_City__c}</td>
+              <td>{! box.shipment.zkmulti__Recipient_State_Province__c} {! box.shipment.zkmulti__Recipient_Zip_Postal_Code__c}</td>
+            </tr>
+            <tr>
+              <td>{! box.shipment.zkmulti__Recipient_Country__c}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+
+      <div class="spacer2"></div>
+
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <table class="top-info">
+      <tr>
+        <td class="bold border-me">Customer #</td>
+        <td class="bold border-me">Purchase Order</td>
+        <td class="bold border-me">Order Date</td>
+        <td class="bold border-me">Order #</td>
+        <td class="bold border-me">Pick Date</td>
+      </tr>
+      <tr>
+        <td class="border-me">{! box.shipment.ZK_Customer_Number__c}</td>
+        <td class="border-me">{! box.shipment.ZK_PO_Number__c}</td>
+        <td class="border-me">{! box.shipment.ZK_Ship_Date__c}</td>
+        <td class="border-me">{! box.shipment.ZK_Order_Summary__c}</td>
+        <td class="border-me">{! box.shipment.ZK_Ship_Date__c}</td>
+      </tr>
+      <tr>
+        <td class="border-me"><strong>TERMS: Open Terms</strong></td>
+        <td class="border-me"><strong>SHIPPED VIA: </strong>{! box.shipment.zkmulti__Service_Type_Name__c}</td>
+        <td class="border-me"></td>
+        <td class="border-me">{! box.shipment.ZK_Location_Name__c}</td>
+        <td class="border-me"><strong>WHSE: </strong>{! box.shipment.ZK_Location_Name__c}</td>
+      </tr>
+    </table>
+
+    <!-- Products -->
+
+    <table class="products-table">
+      <tr>
+        <td class="bold bold-bottom center-me">QUANTITY</td>
+        <td class="bold bold-bottom center-me">QUANTITY</td>
+        <td class="bold bold-bottom center-me">WM</td>
+        <td class="bold bold-bottom center-me">MFG</td>
+        <td class="bold bold-bottom center-me">MFG PART</td>
+        <td class="bold bold-bottom center-me"></td>
+        <td class="bold bold-bottom center-me"></td>
+        <td class="bold bold-bottom center-me"></td>
+        <td class="bold bold-bottom center-me"></td>
+        <td class="bold bold-bottom center-me">EXTENDED</td>
+      </tr>
+      <tr>
+        <td class="bold bold-left-right center-me">ORDERED</td>
+        <td class="bold bold-left-right center-me">SHIPPED</td>
+        <td class="bold bold-left-right center-me">MODEL #</td>
+        <td class="bold bold-left-right center-me">NAME</td>
+        <td class="bold bold-left-right center-me">NUMBER</td>
+        <td class="bold bold-left-right center-me">DESCRIPTION</td>
+        <td class="bold bold-left-right center-me">UM</td>
+        <td class="bold bold-left-right center-me">LIST</td>
+        <td class="bold bold-left-right center-me">NET</td>
+        <td class="bold bold-left-right center-me">NET</td>
+      </tr>
+    
+
+    <!-- Products -->
+         <tbody>
+                 
+                            <apex:variable value="{!1}" var="i"/>
+                            <apex:repeat value="{! box.items }" var="product">
+                                <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}">
+                                
+                                <!-- Quantity Ordered -->
+                                    <td class="center-me-border">
+                                        {! product.item.zkmulti__Quantity__c }
+                                    </td>
+                                    
+                                <!-- Quantity Shipped --> 
+                                    <td class="center-me-border">
+                                        {! product.item.zkmulti__Quantity__c}
+                                    </td>
+                                    
+                                <!-- WM Model# -->
+                                    <td class="center-me-border">
+                                        {! product.item.ZK_WM_Model__c}
+                                    </td>
+                                    
+                                <!-- MFG Name-->
+                                    <td class="center-me-border">
+                                        {! product.item.zkmulti__Name__c}
+                                    </td>
+                                    
+                                <!-- MFG Part Number-->
+                                    <td class="center-me-border">
+                                        {! product.item.zkmulti__PartNumber__c}
+                                    </td>
+                                    
+                                <!-- Description-->
+                                    <td class="center-me-border">
+                                        {! product.item.zkmulti__Description__c}
+                                    </td>
+                                    
+                                <!-- UM -->
+                                    <td class="center-me-border">
+                                        {! product.item.zkmulti__UnitOfMeasurement__c}
+                                    </td>
+                                    
+                                <!-- List -->
+                                    <td class="right-me">
+                                        {! product.item.ZK_Unit_Price__c}
+                                    </td>
+                                    
+                                <!-- Net -->
+                                    <td class="right-me">
+                                        {! product.item.ZK_Unit_Price__c}
+                                    </td>
+                                    
+                                <!-- Extended Net -->
+                                    <td class="right-me">
+                                        {! product.item.ZK_Extended__c}
+                                    </td>
+                                    
+                                      </tr>
+                                <apex:variable value="{!i+1}" var="i" />
+                            </apex:repeat>
+     </tbody>
+    </table>
+
+    <br />
+    <!-- Page something of something -->
+
+    <table class="bottom">
+        <tr>
+            <td class="border-me"></td>
+            <td class="border-me"></td>
+            <td style="width: 25%" class="border-me">If payment is made within our TERMS, you can SAVE by deducting the amount shown below</td>
+            <td style="text-align: center;" class="border-me">Shipment Subtotal</td>
+        </tr>
+        <tr class="height-smaller">
+            <td class="border-me">
+                <p>Packed By:</p>
+                <p>{! box.shipment.ZK_CreatedBy__c}</p>
+            </td>
+            <td class="border-me">
+                <p>Printed</p>
+                <p>{! box.shipment.ZK_CreatedBy__c}</p>
+            </td>
+            <td class="border-me">&nbsp;</td>
+            <td style="text-align: center;" class="border-me">{! box.shipment.ZK_Total_Price__c}</td>
+
+        </tr>
+    </table>
+
+    <br />
+
+    <div class="center-me">To view shipment invoice with any applicable taxes and shipping, visit westmarinepro.com My Account</div>
+
+    <hr class="thicker"/>
+
+    <div class="center-me">Need to make a return?  For more information</div>
+    <div class="center-me">visit westmarinepro.com/returns</div>
+    <div class="center-me">Return item to local store</div>
+    <div class="center-me">Call 1 800 624 6885</div>
+
+    <!-- <img src="{! AttachmentLabelURL }" style="width: 6in; height: 4in;position: absolute;top: 0;"></img> -->
+  </body>
+</html>
+</apex:page>
+
+<!-- SOLD TO MOVE DOWN 2 px -->

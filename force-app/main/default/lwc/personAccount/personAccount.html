@@ -1,0 +1,17 @@
+<template>
+    <template if:true={showAccountComboBox}>
+        <lightning-combobox
+            name="account"
+            label="Account"
+            value={selectedId}
+            placeholder="Select An Account"
+            options={accountOptions}
+            onchange={handleOptionChange}></lightning-combobox>
+    </template>
+    <template if:true={showNewAccountFields}>
+        <div class="slds-box slds-m-top_small slds-theme_shade">
+            <lightning-input-name label="New Account" fields-to-display={accountFieldList} onchange={handleAccountNameChange} required={showNewAccountFields}></lightning-input-name>
+            <lightning-input type="email" label="E-mail Address" placeholder="E-mail Address" onchange={handleEmailFieldChange} required={showNewAccountFields}></lightning-input>
+        </div>
+    </template>
+</template>

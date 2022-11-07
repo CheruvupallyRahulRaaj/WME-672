@@ -1,0 +1,16 @@
+<template>
+  <div class=" slds-box slds-theme_shade">
+  
+<lightning-card  title={title} icon-name="custom:custom57"  >
+  <template if:true={recordsModified}>
+   <lightning-datatable
+            key-field="Id"
+            data={recordsModified}
+            hide-checkbox-column='true'
+            columns={columns}>
+        </lightning-datatable>
+  </template>
+</lightning-card>
+
+</div>
+</template>

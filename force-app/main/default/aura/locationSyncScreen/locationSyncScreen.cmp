@@ -1,0 +1,6 @@
+<aura:component implements="force:appHostable" controller="LocationSyncController">
+    <aura:attribute name="processing" type="Boolean" />
+
+    <c:locationSync aura:id="locationSync" onsync="{!c.processSync}" oncheckstatus="{!c.checkLocationSyncStatus}" onsave="{!c.handleSave}"></c:locationSync>
+
+</aura:component>

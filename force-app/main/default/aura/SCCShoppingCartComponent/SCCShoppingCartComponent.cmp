@@ -1,0 +1,29 @@
+<aura:component controller="SCCShoppingCartAuraController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName,force:lightningQuickAction" access="global" >  
+    
+    <ltng:require scripts="/resource/jQueryFiles/jquery/jquery-1.12.4.min.js" afterScriptsLoaded="{!c.afterScriptsLoaded}"/>
+    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="checkRecordType" type="boolean" default="false"/>    
+    <aura:attribute name="storeSessionURL" type="String"/>
+    <aura:attribute name="salesChannel" type="String"/>
+    <aura:attribute name="storeFrontURL" type="String"/>
+    <aura:attribute name="getObjectName" type="String"/>
+    <aura:attribute name="OOBOUrl" type="String"/>
+    <aura:attribute name="OOBOProUrl" type="String"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.getObjectName == 'OrderSummary'}">
+        <lightning:button variant="brand-outline" label="Replace Order" iconName="utility:new_window" iconPosition="right" onclick="{!c.openShoppingCart}" />
+        <aura:set attribute="else">
+            <lightning:button variant="brand-outline" label="Launch Shopping Cart" iconName="utility:new_window" iconPosition="right" onclick="{!c.openShoppingCart}" />
+        </aura:set>
+	</aura:if>
+</aura:component>

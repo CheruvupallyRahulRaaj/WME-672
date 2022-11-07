@@ -1,0 +1,53 @@
+<aura:component implements="force:appHostable" controller="CreateOrderSummaryController">
+    <aura:attribute name="processing" type="Boolean" />
+    <aura:attribute name="payload" type="Object" />
+    <aura:attribute name="isStandalone" type="Boolean" default="true"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="accountId" type="String" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <lightning:navigation aura:id="navService"/>
+
+    <!-- header section start -->
+    <aura:renderIf isTrue="{!v.isStandalone}">
+        <div class="slds-page-header slds-m-bottom_small">
+            <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                <div class="slds-media__figure">
+                    <lightning:icon iconName="standard:orders" size="Medium"/>
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                    <div class="slds-page-header__name-title">
+                        <h1>
+                        <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">New Order</span>
+                        </h1>
+                    </div>
+                    </div>
+                    <p class="slds-page-header__name-meta">Magic Goat Order Creation Tool</p>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </aura:renderIf>
+    <!-- header section end -->
+
+    <div class="slds-box slds-theme_default">
+        <!-- body section start -->
+        <c:createOrderScreen aura:id="createOrderScreen" accountId="{!v.accountId}" onchange="{!c.handleCreateOrderScreenChange}"></c:createOrderScreen>
+        <!-- body section end -->
+
+        <!-- footer section start-->
+        <div class="slds-align_absolute-center">
+            <lightning:button variant="brand" label="Create Order" onclick="{!c.processReq}"></lightning:button>
+            <aura:if isTrue="{! v.processing }">
+                <lightning:spinner alternative-text="Processing..." size="large"></lightning:spinner>
+            </aura:if>
+        </div>
+        <!-- footer section end -->
+    </div>
+</aura:component>

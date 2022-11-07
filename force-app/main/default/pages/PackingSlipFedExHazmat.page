@@ -1,0 +1,392 @@
+<apex:page renderAs="pdf" controller="zkmulti.PackingSlipController" showHeader="false" sideBar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" action="{! doInit }" docType="html-5.0">
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Packing Slip</title>
+        <style media="all" type="text/css">
+        @page {
+            margin: 30px 20px 50px 20px;
+      size: A4 landscape;
+            @top-center {
+                /*content: element(header);*/
+            }
+            @bottom-center {
+                content: element(footer);
+            }
+            @bottom-right {
+                content: counter(page) " / " counter(pages);
+            }
+      
+        }
+        body {
+            font-family: sans-serif;
+        }
+        div.header {
+            position: running(header);
+            margin: 10px 0px 60px 8px;
+            border-bottom: 1px solid black;
+            width: 100%;
+        }
+        div.footer {
+            position: running(footer);
+            display: block;
+            padding: 0 0 0 8px;
+            text-align: center;
+            width:100%;
+        }
+        .footer-text {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            display:inline-block;
+            width:200px;
+        }
+        .pagenumber:before {
+            content: counter(page);
+            float: right;
+            right: 20px;
+            bottom: 5px;
+        }
+        .pagecount:before {
+            content: counter(pages);
+        }
+        .header-text {
+            display: inline-block;
+            margin: 7px 0 14px 32px;
+        }
+        .header-text-slip {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 7px;
+            max-width: 500px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .header img.ee-logo {
+            vertical-align: top;
+        }
+        .header-text .header-image-title {
+            height: 20px;
+            vertical-align: top;
+        }
+        .ship-info-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .ship-info-table td {
+            padding:5px;
+        }
+        .page-table {
+            width: 100%;
+            margin: 30px  0 0 0 ;
+            border-collapse: collapse;
+        }
+
+        .page-table tr.alternate-row-background {background: #EFEFEF}
+        .table-header {
+            font-size: 16px;
+            font-weight: bold;
+            color:white;
+            background-color: black;
+            border-bottom: 1px solid black;
+        }
+
+        .page-table tr td {padding:5px;}
+        .table-header-right {text-align:right;}
+        .table-product-description {font-size:15px;}
+
+        .table-product-quantity {
+      font-size: 12px;
+      border: 1px solid;
+    }
+
+        .ship-info-header {
+            font-weight: bold;
+            font-size: 15px;
+            margin-top:25px;
+        }
+        .ship-info-main {
+            font-size: 14px;
+            max-width: 440px;
+        }
+
+    .fedex {
+      height: 13%;
+      width: 25%;
+      
+    }
+
+    .shipper-name{
+      height: 13%;
+      width: 23%;
+      padding-left: 10px;
+      
+    }
+
+    .shipper-number {
+      height: 13%;
+      width: 23%;
+      margin-left: 6px;
+      margin-right: 6px;
+      
+    }
+
+    .emergency-contact {
+      height: 13%;
+      width: 23%;
+      border: 2px solid;
+      
+    }
+
+    .floater {
+      float: left;
+    }
+
+    .float-right {
+      float: right;
+    }
+
+    .move-right {
+      margin-left: 35.8%;
+      font-size: 10px;
+    }
+
+    .smaller-text {
+      font-size: 10px;
+    }
+
+    .main {
+      border-collapse: collapse;
+
+    }
+
+    .border-me {
+      border: 1px solid;
+      text-align: center;
+    }
+
+    .border-no-top {
+      border-bottom: 1px solid;
+      border-left: 1px solid;
+      border-right: 1px solid;
+    }
+
+    .border-all {
+      border: 1px solid;
+    }
+
+    .absolute {
+      position: absolute;
+      margin-top: 103px;
+    }
+
+    .center-me {
+      text-align: center;
+      margin-left: 20px;
+    }
+
+    .image {
+      height: 50px;
+      width: 120px;
+      margin-left: 40px;
+      margin-bottom: -10px;
+    }
+
+    .smaller {
+      font-size: 12px;
+    }
+    
+    .company {
+      margin-left: 10px;
+    }
+
+    .emergency {
+      font-size: 12px;
+    }
+
+    .bottom-text {
+      font-weight: bold;
+      width: 70%;
+      float: left;
+      font-size: 12px;
+    }
+
+
+
+        </style>
+    </head>
+    <body>
+    <div class="wrapper">
+      <div class="fedex floater">
+        <div class="image"><apex:image url="{!$Resource.FedExLogo}"/></div> <br />
+        <strong><span class="center-me">HAZARDOUS MATERIALS</span> <br /><span class="center-me">CERTIFICATION</span></strong>
+      </div>
+      <div class="shipper-name floater border-all">
+        SHIPPER NAME AND ADDRESS <br />
+        West Marine Products <br />
+        2395 Bert Drive <br />
+        <br />
+        Hollister, CA 95023
+      </div>
+      <div class="shipper-number floater">
+        SHIPPER NUMBER <br />
+        <p class="border-no-top">109329100</p>
+        DATE <br />
+        <span class="line-me">{! box.shipment.ZK_Ship_Date__c}</span>
+      </div>
+        <div class="emergency-contact floater">
+          <span class="emergency">EMERGENCY CONTACT NUMBER</span> <br />
+          <strong><span class="company">3E Company. Contract #2282</span></strong><br />
+          <strong><span class="company">1-800-451-8346</span></strong> <br /> <br />
+          <span class="smaller">The telephone number is for 24 hour emergency response information</span> <br />
+      </div>
+    </div>
+
+    <div class="second">
+      <div class="absolute smaller-text">Abbreviations not permitted except where noted</div>
+      <div class="floater move-right">MARK ANY SPOLED SHEET *VOID* AND GIVE TO DRIVER TO RETAIN ON FILE FOR 1-YEAR</div>
+      <div class="stretch"></div>
+    </div>
+
+        
+    <table class="main">
+      <tr>
+        <td class="border-me">NUMBER</td>
+        <td class="border-me">IDENTIFICATION NUMBER</td>
+        <td class="border-me">D.O.T SHIPPING NAME OF MATERIAL <br />
+        <span>Additional entries if applicable</span>
+        </td>
+        <td class="border-me">HAZARD CLASS OR DIVISION NUMBER</td>
+        <td class="border-me">PACKING GROUP</td>
+        <td class="border-me">WEIGHT</td>
+        <td class="border-me">TYPE DOT LABEL(S), LTD, QTY, SPECIAL PERMIT, OR, REQUIRED INFORMATION</td>
+        <td class="border-me">RECEIVER NAME, CITY, AND STATE <br />
+        <span>Abbreviations permitted</span></td>
+        <td class="border-me">TRACKING I.D.
+          <span>BARCODE PACKAGE #</span>
+        </td>
+      </tr>
+
+      <tbody>            
+        <apex:variable value="{!1}" var="i"/>
+        <apex:repeat value="{! box.items }" var="product">
+          <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}">
+            
+            <!-- Number and type of packaging -->
+            <td class="table-product-quantity">
+              APEX
+            </td>
+
+            <!-- Identification -->
+            <td class="table-product-quantity">
+               APEX
+            </td>
+
+            <!-- DOT Shipping name -->
+            <td class="table-product-quantity">
+               APEX
+            </td>
+
+            <!-- Hazard Class -->
+            <td class="table-product-quantity">
+              APEX
+            </td>
+
+            <!-- Packing Group -->
+            <td class="table-product-quantity">
+              APEX
+            </td>
+
+            <!-- Type Dot Labels -->
+            <td class="table-product-quantity">
+              APEX
+            </td>
+
+            <!-- Receivers name city and state -->
+            <td class="table-product-quantity">
+              APEX
+            </td>
+
+            <!-- Receivers name city state -->
+            <td class="table-product-quantity">
+              {! box.shipment.zkmulti__Recipient_Name__c }, <br />
+              {! box.shipment.zkmulti__Recipient_City__c }, <br />
+              {! box.shipment.zkmulti__Recipient_State_Province__c }
+            </td>
+            <!-- Tracking I.D -->
+            <td class="table-product-quantity">
+              {! box.shipment.zkmulti__Tracking_Number__c}
+            </td>
+
+            
+
+          </tr>
+          <apex:variable value="{!i+1}" var="i" />
+        </apex:repeat>
+      
+      <!-- Products -->
+        <!-- <table class="page-table">  
+            <tbody>            
+                    <apex:variable value="{!1}" var="i"/>
+                    <apex:repeat value="{! box.items }" var="product">
+                        <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}">
+                            <td class="table-product-description">
+                                {! product.item.Description__c }
+                            </td>
+                            <td class="table-product-quantity">
+                                {! product.item.Quantity__c }
+                            </td>
+                        </tr>
+                        <apex:variable value="{!i+1}" var="i" />
+                    </apex:repeat>
+            </tbody>
+        </table> -->
+
+        </tbody>
+    </table>
+
+    <div class="bottom-wrapper">
+      <p class="bottom-text">THIS IS TO CERTIFY THAT THE ABOVE-NAMED MATERIALS ARE PROPERLY CLASSIFIED, DESCRIBED, PACKAGED, MARKED, AND LABELED,
+        AND ARE IN PROPER CONDITION FOR TRANSPORTATION ACCORDING TO APPLICABLE REGULATIONS OF THE DEPARTMENT OF
+        TRANSPORTATION.<br />
+        HAZARDOUS MATERIALS CAN ONLY BE SHIPPED WITHIN THE 48 CONTIGUOUS STATES VIA GROUND SERVICE<br />
+        HAZARDOUS MATERIALS AND ORM-Ds ARE PROHIBITED FROM BEING SHIPPED TO ALASKA, HAWAII, OR PUERTO RICO. ALL
+          PACKAGES MUST BE PREPARED IN ACCORDANCE WITH ALL DOT AND FEDEX GROUND REQUIREMENTS.
+        
+        <p class="float-right margin-me">Total Weight:&nbsp; APEX</p>
+        <br />
+        <br />
+        <p class="float-right">SIGNATURE&nbsp;____________________________</p>
+        </p>
+    </div>
+
+        
+        <!-- Products -->
+        <!-- <table class="page-table">  
+            <tbody>            
+                    <apex:variable value="{!1}" var="i"/>
+                    <apex:repeat value="{! box.items }" var="product">
+                        <tr class="{!IF(mod(i,2)==0, 'alternate-row-background', '')}">
+                            <td class="table-product-description">
+                                {! product.item.Description__c }
+                            </td>
+                            <td class="table-product-quantity">
+                                {! product.item.Quantity__c }
+                            </td>
+                        </tr>
+                        <apex:variable value="{!i+1}" var="i" />
+                    </apex:repeat>
+            </tbody>
+        </table> -->
+        <!-- <img src="{! AttachmentLabelURL }" style="width: 6in; height: 4in;position: absolute;top: 0;"></img> -->
+        
+
+    </body>
+</html>
+</apex:page>

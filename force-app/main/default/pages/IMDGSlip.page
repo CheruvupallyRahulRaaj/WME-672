@@ -1,0 +1,394 @@
+<apex:page renderAs="pdf" controller="zkmulti.PackingSlipController" showHeader="false" sideBar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" action="{! doInit }" docType="html-5.0">
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Packing Slip</title>
+        <style media="all" type="text/css">
+        @page {
+            margin: 30px 20px 50px 20px;
+            @top-center {
+                /*content: element(header);*/
+            }
+            @bottom-center {
+                content: element(footer);
+            }
+            @bottom-right {
+                content: counter(page) " / " counter(pages);
+            }
+        }
+        body {
+            font-family: sans-serif;
+        }
+        div.header {
+            position: running(header);
+            margin: 10px 0px 60px 8px;
+            border-bottom: 1px solid black;
+            width: 100%;
+        }
+        div.footer {
+            position: running(footer);
+            display: block;
+            padding: 0 0 0 8px;
+            text-align: center;
+            width:100%;
+        }
+        .footer-text {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            display:inline-block;
+            width:200px;
+        }
+        .pagenumber:before {
+            content: counter(page);
+            float: right;
+            right: 20px;
+            bottom: 5px;
+        }
+        .pagecount:before {
+            content: counter(pages);
+        }
+        .header-text {
+            display: inline-block;
+            margin: 7px 0 14px 32px;
+        }
+        .header-text-slip {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 7px;
+            max-width: 500px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .header img.ee-logo {
+            vertical-align: top;
+        }
+        .header-text .header-image-title {
+            height: 20px;
+            vertical-align: top;
+        }
+        .ship-info-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .ship-info-table td {
+            padding:5px;
+        }
+        .page-table {
+            width: 100%;
+            margin: 30px  0 0 0 ;
+            border-collapse: collapse;
+        }
+
+        .page-table tr.alternate-row-background {background: #EFEFEF}
+        .table-header {
+            font-size: 16px;
+            font-weight: bold;
+            color:white;
+            background-color: black;
+            border-bottom: 1px solid black;
+        }
+
+        .logo{ width:100%;text-align:center;font-weight:bold;font-size:50px;}
+
+        .page-table tr td {padding:5px;}
+        .table-header-right {text-align:right;}
+        .table-product-description {font-size:15px;}
+        .table-product-quantity {text-align:right;font-size:15px;}
+        .ship-info-header {
+            font-weight: bold;
+            font-size: 15px;
+            margin-top:25px;
+        }
+        .ship-info-main {
+            font-size: 14px;
+            max-width: 440px;
+        }
+
+        .dg{
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .num {
+            position: absolute;
+            left: 78%;
+            top: 2%;
+        }
+
+        .notes {
+            font-weight: bold;
+            font-size: 18;
+        }
+
+        .leftpad {
+            padding-left: 12px;
+        }
+
+        .all-tables {
+            border: 1px solid;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .fifty {
+            width: 50%;
+            height: 10%;
+        }
+
+        .twenty-five {
+            width: 25%;
+            height: 10%;
+        }
+
+        .border-left {
+            border-left: 1px solid;
+        }
+
+        .border-right {
+            border-right: 1px solid;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid;
+        } 
+
+        .ten {
+            width: 10%;
+            height: 20%;
+        }
+
+        .forty {
+            width: 40%;
+            height: 10%;
+        }
+
+        .shipper {
+            padding-bottom: 4%;
+        }
+
+        .consignee {
+            padding-bottom: 4%;
+        }
+
+        .hrs {
+            width: 100%;
+            height: 1px;
+            background-color: black;
+            border-width: 0px;
+            margin: 0px;
+            margin-top: 5px;
+        }
+
+        </style>
+    </head>
+    <body>
+
+        <div class="footer"> 
+            <p class='dg'>IMO DANGEROUS GOODS DECLARATION</p>
+        </div>
+        <div class="num">{! box.boxNumberString }</div>
+
+        <div class='notes'>This form meets the requirements of SOLAS 74 chapter VII, regulation 5; MARPOL 73/78 Annex III, regulation 4 and the IMDG Code, chapter 5.4.</div>
+
+        <br />
+
+        <table class='all-tables'>
+            <tr>
+                <td class='border-bottom ten shipper'>Shipper:</td>
+                <td class='leftpad forty border-bottom'>APEX <br />
+                    APEX <br />
+                    APEX <br />
+                    APEX <br />
+                </td>
+                <td class='fifty border-left'>Reference Nbrs: APEX <br /><hr class='hrs' />
+                    Carrier: APEX <br /><hr class='hrs'/>
+                    Booking Number: <br /><hr class='move-down hrs'/>
+                </td>
+            </tr>
+            <tr>
+                <td class='ten'>Consignee:</td>
+                <td class='leftpad forty'>APEX <br />
+                    APEX <br />
+                    APEX <br />
+                    APEX <br />
+                    APEX <br />
+                    APEX <br />
+                </td>
+                <td class='fifty border-left'>Name/Status, company/organization of signatory: <br />
+                    APEX <br />
+                </td>
+            </tr>
+        </table>
+
+        <table class='all-tables'>
+            <tr>
+                <td class='fifty'>
+                    Container packing certificate/vehicle declaration <br />
+                    <br />
+                    DECLARATION <br />
+                    <br />
+                    It is hereby declared that the packing of goods into the unit has been carried out in acoordance with the provisions of 5.4.2.1
+                </td>
+                <td class='fifty border-left'>
+                    Place and Date: <hr class='hrs'/><br />
+                    Signature on behalf of shipper: 
+                </td>
+            </tr>
+            
+        </table>
+
+        <table class='all-tables'>
+            <tr>
+                <td class='twenty-five bigger'>
+                    Ship's Name and Voy #: <br />
+                </td>
+                <td class='twenty-five bigger'>
+                    Port of Loading: <br />
+                </td>
+                <td class='fifty bigger'>
+                    Special Instructions: <br />
+                </td>
+            </tr>
+            <tr>
+                <td class='twenty-five bigger'>
+                    Port of Discharge: <br />
+                </td>
+                <td class='twenty-five bigger'>
+                    Goods Delivered As: <br />
+                    APEX
+                </td>
+                <td class='fifty bigger'>
+                    Type of Unit and Unit Nbr: <br />
+                </td>
+            </tr>
+        </table>
+
+        <table class='all-tables'>
+            <tr>
+                <td class='border-bottom'>No.</td>
+                <td class='border-bottom'>
+                    Qty <br />
+                    Pkgs:
+                </td>
+                <td class='border-bottom'>
+                    Type and Kind of <br />
+                    Size
+                </td>
+                <td class='border-bottom'>
+                    Description (inc. basic description, add'l descriptive info, ER, phone, ETC)
+                </td>
+                <td class='border-bottom'>
+                    Mass/Volume/Cube
+                </td>
+            </tr>
+
+            <apex:variable value="{!1}" var="i"/>
+            <apex:repeat value="{! box.items }" var="product">
+
+                <tr class="{!IF(mod(i,2)==0, '', '')}">
+
+                    <td class="Number">
+                         APEX 
+                    </td>
+                    <td class="Quantity">
+                         APEX 
+                    </td>
+                    <td class="Type Kind of Size">
+                         APEX 
+                    </td>
+                    <td class="Description">
+                         APEX 
+                    </td>
+                </tr>
+                <apex:variable value="{!i+1}" var="i" />
+            </apex:repeat>
+
+
+        </table>
+
+        <table class="all-tables additional-information">
+            <tr>
+                <td>
+                    Additional Information:
+                </td>
+                <td>
+                    24 HOUR EMERGENCY NUMBER <br />
+                    3E Company - 1-800-451-8346 or 1-760-602-8700 Contract # 2282
+                </td>
+            </tr>
+        </table>
+
+        <table class="all-tables last">
+            <tr>
+                <td class='fifty'>
+                    <strong>DECLARATION</strong> <br />
+                    It is hereby declared that the contents of this consignment are fully and accurately described above by the proper shipping name(s) and are classified, packaged, marked, and labeled/placarded, and are in all respects in proper condition for transport according to applicable international and governmental regulations.
+                </td>
+                <td class='fifty'>
+                    Name/status, company/organization or signatory: <br />
+                    WEST MARINE PRO <br />
+                     APEX DATE <br />
+                    Signature on behalf of shipper: <br />
+                     APEX NAME
+                </td>
+
+            </tr>
+        </table>
+        
+
+        <!-- Products -->
+        <!-- <table class="page-table">  
+            <tbody>
+                <apex:variable value="{!1}" var="i"/>
+                    <apex:repeat value="{! box.items }" var="product">
+
+                        <tr class="{!IF(mod(i,2)==0, '', '')}">
+
+                            <td class="table-quantity">
+                                {! APEX }
+                            </td>
+                            <td class="table-product-quantity">
+                                {! product.item.Quantity__c }
+                            </td>
+                        </tr>
+                        <apex:variable value="{!i+1}" var="i" />
+                    </apex:repeat>
+            </tbody> -->
+            <!-- 
+            <tbody>
+                <tr>
+                    <td class="table-header">
+                        Description
+                    </td>
+                    <td class="table-header table-header-right">
+                        Quantity
+                    </td>
+                </tr>             
+                    <apex:variable value="{!1}" var="i"/>
+                    <apex:repeat value="{! box.items }" var="product">
+                        <tr class="{!IF(mod(i,2)==0, '', '')}">
+                            <td class="table-product-description">
+                                {! product.item.Description__c }
+                            </td>
+                            <td class="table-product-quantity">
+                                {! product.item.Quantity__c }
+                            </td>
+                        </tr>
+                        <apex:variable value="{!i+1}" var="i" />
+                    </apex:repeat>
+            </tbody>
+            -->
+        
+        <!-- <img src="{! AttachmentLabelURL }" style="width: 6in; height: 4in;position: absolute;top: 0;"></img> -->
+        
+
+    </body>
+</html>
+</apex:page>

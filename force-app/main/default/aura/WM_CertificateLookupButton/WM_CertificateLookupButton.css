@@ -1,0 +1,7 @@
+.THIS {
+}
+
+.THIS .slds-modal__content {
+        overflow-y: scroll !important;
+        overflow-x: scroll !important;
+}

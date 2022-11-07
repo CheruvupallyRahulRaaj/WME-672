@@ -1,0 +1,134 @@
+<template>
+    <div class="slds-page-header slds-m-bottom_small">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:location" size="Medium"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                    <div class="slds-page-header__name-title">
+                        <h1>
+                        <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">Location Management</span>
+                        </h1>
+                    </div>
+                    </div>
+                    <p class="slds-page-header__name-meta">Create and manage inventory locations and groups</p>
+                </div>
+                </div>
+            </div>
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                        <button class="slds-button slds-button_neutral" onclick={handleNewGroup}>New Location Group</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slds-box slds-theme_default">
+        <template if:false={hasData}>
+            <div class="slds-align_absolute-center spinner-container">
+                <lightning-spinner alternative-text="Loading..." size="large"></lightning-spinner>
+            </div>
+        </template>
+        <template if:true={hasData}>
+            <lightning-layout>
+                <lightning-layout-item padding="around-small" size="6">
+                    <!-- All Locations -->
+                    <div if:true={displayInfoMessage}>
+                        <c-alert theme="info" value="Select one or more locations by holding the Ctrl key and clicking on the desired location(s). 
+                            Drag the selected locations to the desired location groups on the left." onclosealert={handleInfoAlertClose}></c-alert>
+                    </div>
+                    <lightning-card variant="Narrow"  title="Available Locations" icon-name="standard:location">
+                        <lightning-button label="New" slot="actions" onclick={handleNewLocation}></lightning-button>
+                        <ul role="listbox" class="slds-border_top slds-border_right slds-border_bottom slds-border_left slds-scrollable_y" style="max-height:615px">
+                            <template for:each={allLocations} for:item='location'>
+                                <li key={location.id} 
+                                    id={location.id}
+                                    data-id={location.id}
+                                    role="option" 
+                                    draggable="true" 
+                                    class="slds-p-around_xx-small slds-border_bottom draggable" 
+                                    aria-describedby="operation" 
+                                    tabindex="0"
+                                    onclick={handleItemSelection}
+                                    ondragstart={dragstart}
+                                    ondragend={dragend} >
+                                    <span aria-hidden="true" class="slds-text-heading_medium slds-p-right_xx-small">⋮</span>
+                                    {location.name} ({location.type})
+                                </li>
+                            </template>
+                        </ul>
+                    </lightning-card>
+                </lightning-layout-item>
+
+                <lightning-layout-item padding="around-small" size="6">
+                    <!-- Location Groups -->
+                    <div if:true={displayWarningMessage}>
+                        <c-alert theme="warning" value='Please note the Locations will not be saved  
+                            until you click on the "Save Location Assignments" or "Save and Sync Locations" button below' onclosealert={handleWarningAlertClose}></c-alert>
+                    </div>
+                    <template for:each={allGroups} for:item='group'>
+                        <div key={group.id} 
+                            data-id={group.id} 
+                            ondragover={dragover} 
+                            ondrop={drop} 
+                            ondragleave={dragleave}
+                            ondragenter={dragenter}
+                            class={group.cssClass} 
+                            style="z-index: 9000;">
+                            <div class="slds-m-bottom_medium">
+                                <lightning-card key={group.id} variant="Narrow" data-id={group.id} title={group.name} icon-name="standard:location">
+                                    <div slot="actions" >
+                                        <lightning-button label="New" data-id={group.id} onclick={handleNewLocation}></lightning-button> 
+                                        <span class="slds-p-left_xx-small">
+                                            <lightning-helptext icon-variant="inverse" content="This action creates a new location record and temporarily assigns the location to the group, in order to persist the relationship, click the Save and Sync Locations button below."></lightning-helptext>
+                                        </span>
+                                    </div>
+                                    <ul role="listbox" 
+                                        data-id={group.id}
+                                        class="slds-border_top slds-border_right slds-border_bottom slds-border_left" 
+                                        style="z-index: -100;">
+                                        <template for:each={group.locations} for:item='location'>
+                                            <li key={location.id} 
+                                                role="option" 
+                                                data-id={group.id}
+                                                class="slds-p-around_xx-small slds-border_bottom" 
+                                                aria-describedby="operation" 
+                                                tabindex="0">
+                                                <span aria-hidden="true" class="slds-p-left_x-small">{location.name} 
+                                                    <span if:true={location.type}> ({location.type})</span>
+                                                </span>
+                                                <!-- add remove button-->
+                                                <lightning-button-icon icon-name="utility:delete" variant="bare" alternative-text="Delete" data-id={location.id} data-group={group.id} onclick={removeLocation} class="slds-m-left_xx-small slds-p-right_xx-small slds-float_right" title="Delete"></lightning-button-icon>
+                                            </li>
+                                        </template>
+                                        <li if:false={group.hasLocations} data-id={group.id} class="slds-p-around_xx-small">
+                                            Click and drag a location from the available list.
+                                        </li>
+                                    </ul>    
+                                </lightning-card>
+                            </div>
+                        </div>
+                    </template>
+                </lightning-layout-item>
+            </lightning-layout>
+            <div class="slds-align_absolute-center">
+                <span class="slds-p-right_small">
+                    <lightning-button variant="brand" label="Check Sync Status" onclick='{handleSyncStatus}' disabled={syncStatusDisabled}></lightning-button>
+                </span>
+                <span class="slds-p-right_small">
+                    <lightning-button variant="brand" label="Save Location Assignments" onclick='{handleAssignments}'></lightning-button>
+                </span>
+                <lightning-button variant="brand" label="Save and Sync Locations" onclick='{handleSync}' disabled={syncLocationsDisabled}></lightning-button>
+                <div if:true={processing}>
+                    <lightning-spinner alternative-text="Loading..." size="large"></lightning-spinner>
+                </div>
+            </div>
+        </template>
+        <c-location-modal onsave={handleSave}></c-location-modal>
+    </div>
+</template>

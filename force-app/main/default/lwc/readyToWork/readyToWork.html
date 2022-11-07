@@ -1,0 +1,11 @@
+<template>
+    <lightning-card>
+        <template if:true={showPickerId}>
+            <lightning-input label="Enter Picker Id" value={pickerId} onchange={updatePickerId}></lightning-input>
+            <lightning-button label="Update Picker Id" variant="brand" onclick={updatePickerIdToDB}></lightning-button>
+        </template>
+        <template if:false={showPickerId}>
+            <lightning-button label="Ready to Pick" variant="brand" onclick={showPicker}></lightning-button>
+        </template>
+    </lightning-card>
+</template>
